@@ -56,14 +56,14 @@ contract governance {
         _;
     }
 
-    function getProposal(string memory _subject, string memory _detail) public checkVotePower {
+    function openProposal(string memory _subject, string memory _detail) public checkVotePower {
         votePower[msg.sender] -= 1;
         P_number ++;
         votes[P_number] = vote( P_number, block.timestamp, msg.sender, 
         _subject, _detail, 0, 0, false, voteResult.inProgress );
     } // 안건 제안. 투표권을?? 한개?? 소모 하도록 코드 짜놓음.
 
-    function getVotesAccept(uint P_numbers) public checkVotePower {
+    function openVotesAccept(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
         votePower[msg.sender] -= 1;
         votes[P_numbers].accept++;
@@ -71,7 +71,7 @@ contract governance {
         checkMyStatus[msg.sender][P_numbers].voteChecks = voteCheck.accept;
     } // n번 안건 찬성 버튼을 누르면 작동?
 
-    function getVotesDeny(uint P_numbers) public checkVotePower {
+    function openVotesDeny(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
         votePower[msg.sender] -= 1;
         votes[P_numbers].deny++;
@@ -95,4 +95,16 @@ contract governance {
     function userVoteCheck(uint P_numbers) public view returns(myStatus memory){
         return checkMyStatus[msg.sender][P_numbers]; 
     } // n번 안건에 투표 했는지 확인.
+
+    function getVotePower() public view returns(uint){
+        return votePower[msg.sender]; // 유저의 투표권 갯수 값 불러오기
+    }
+
+    function getP_number() public view returns(uint){
+        return P_number; // 현재 제안된 안건의 갯수 값 불러오기
+    }
+
+    function getMyStatus(uint P_numbers) public view returns(uint){
+        return checkMyStatus[msg.sender][P_numbers].count; // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
+    }
 }
