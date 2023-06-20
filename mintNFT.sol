@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /*
     들어가야 하는 것들.
@@ -33,25 +34,35 @@ ok  3. 투표권 갯수
 
 contract MyNFT is ERC721, Ownable {
     using Counters for Counters.Counter;
-    IERC20 public tokenAddress;
-    uint256 public rate = 100 * 10 ** 18;
+    IERC20 public tokenAddress; // 테스트 USDT 주소
+    address public insurPool; // 보험기금 주소
+    uint256 public fee = 1; // 보험료
+    string public URI; // Uri
 
-    Counters.Counter private _tokenIdCounter;
+    Counters.Counter private _tokenIdCounter; // 토큰ID 카운팅
 
-    constructor(address _tokenAddress) ERC721("Sand Cover", "SC") {
+    constructor(address _tokenAddress, address _insurPool, string memory _uri) ERC721("Sand Cover", "SC") {
         tokenAddress = IERC20(_tokenAddress);
+        insurPool = _insurPool;
+        URI = _uri;
     }
 
-    function safeMint() public {
-        tokenAddress.transferFrom(msg.sender, address(this), rate);
+    function Mint_Cover() public {
+        tokenAddress.transferFrom(msg.sender, insurPool, fee * 10 ** 16); // 0.01 단위
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
         _safeMint(msg.sender, tokenId);
     }
 
-    function withdrawToken() public onlyOwner {
-        tokenAddress.transfer(msg.sender, tokenAddress.balanceOf(address(this)));
-    }
+    function tokenURI(uint _tokenID) public view override returns(string memory){
+        return string(abi.encodePacked(URI, "/" , Strings.toString(_tokenID) , ".json"));
+    } // uri 를 갖다 붙히는 작업
+
+    // function withdrawToken() public onlyOwner {
+    //     tokenAddress.transfer(msg.sender, tokenAddress.balanceOf(address(this)));
+    // }
     // 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b 2nd EOA
     // 0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80 USDT CA
+    // 0x91e4b6f4b858d6E59c98008576E2b67E2f76D080 goerli CA - myNFT
 }
+
