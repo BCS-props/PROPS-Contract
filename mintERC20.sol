@@ -10,10 +10,6 @@ contract USDT_TEST is ERC20("US Dollar Tether","USDT") {
         _mint(msg.sender, _totalSupply);
     }
 
-    function getBalance() public view returns(uint) {
-        return balanceOf(msg.sender);
-    }
-
     function mintToken(uint _amount) public {
         _mint(address(this), _amount);
     }
