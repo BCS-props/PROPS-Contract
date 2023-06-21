@@ -58,9 +58,8 @@ contract governance {
 
     function openProposal(string memory _subject, string memory _detail) public checkVotePower {
         votePower[msg.sender] -= 1;
-        P_number ++;
-        votes[P_number] = vote( P_number, block.timestamp, msg.sender, 
-        _subject, _detail, 0, 0, false, voteResult.inProgress );
+        votes.push( vote( ++P_number, block.timestamp, msg.sender,_subject, _detail, 0, 0, false, voteResult.inProgress ));
+        // votes[P_number] = vote( P_number, block.timestamp, msg.sender, _subject, _detail, 0, 0, false, voteResult.inProgress );
     } // 안건 제안. 투표권을?? 한개?? 소모 하도록 코드 짜놓음.
 
     function openVotesAccept(uint P_numbers) public checkVotePower {
@@ -96,8 +95,8 @@ contract governance {
         return checkMyStatus[msg.sender][P_numbers]; 
     } // n번 안건에 투표 했는지 확인.
 
-    function getVotePower() public view returns(uint){
-        return votePower[msg.sender]; // 유저의 투표권 갯수 값 불러오기
+    function getVotePower(address msgsender) public view returns(uint){
+        return votePower[msgsender]; // 유저의 투표권 갯수 값 불러오기
     }
 
     function getP_number() public view returns(uint){
@@ -107,4 +106,8 @@ contract governance {
     function getMyStatus(uint P_numbers) public view returns(uint){
         return checkMyStatus[msg.sender][P_numbers].count; // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
     }
+
+    function Test_increasedVotePower() public {
+        votePower[msg.sender] += 3;
+    } // 테스트를 위해 만든 버튼!!!!!
 }
