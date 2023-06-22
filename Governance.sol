@@ -10,7 +10,7 @@ pragma solidity ^0.8.18;
 */
 
 contract governance {
-    struct vote {
+    struct proposal {
         uint num; // 자동 카운팅
         uint time; // 자동 카운팅
         address maker; // msg.sender
@@ -39,7 +39,7 @@ contract governance {
         deny
     }
     
-    vote[] public votes;
+    proposal[] public proposals;
 
     mapping(address => mapping(uint => myStatus)) checkMyStatus; // 내 투표 확인하기
     mapping(address => uint) votePower; // 투표권 갯수
@@ -58,38 +58,38 @@ contract governance {
 
     function openProposal(string memory _subject, string memory _detail) public checkVotePower {
         votePower[msg.sender] -= 1;
-        votes.push( vote( ++P_number, block.timestamp, msg.sender,_subject, _detail, 0, 0, false, voteResult.inProgress ));
-        // votes[P_number] = vote( P_number, block.timestamp, msg.sender, _subject, _detail, 0, 0, false, voteResult.inProgress );
-    } // 안건 제안. 투표권을?? 한개?? 소모 하도록 코드 짜놓음.
+        proposals.push( proposal ( ++P_number, block.timestamp, msg.sender,_subject, 
+        _detail, 0, 0, false, voteResult.inProgress ));
+    } // 안건 제안. 투표권을 1개 소모하고, 2주가 지나면 자동으로 종료 됨. 어떻게 자동종료..?
+
+    function closeProposal(uint P_numbers) public {
+        require(block.timestamp >= proposals[P_numbers].time + 2 weeks // 안건 제안 후 2주가 지난 상태에서 제안자가 종료
+        && proposals[P_numbers].maker == msg.sender || admin == msg.sender); // 또는, admin 이 직접 close 가능.
+        proposals[P_numbers].status = true;
+        if(proposals[P_numbers].accept > proposals[P_numbers].deny 
+        /* && users * 33 / 100 =< proposals[P_numbers].accept + proposals[P_numbers].deny 
+        총 투표수가 전체 유저의 33% 이상이면서 찬성표가 반대표보다 많아야 passed. */){
+        proposals[P_numbers].voteResults = voteResult.passed;
+        } else {
+        proposals[P_numbers].voteResults = voteResult.rejected;
+        }
+    }
 
     function openVotesAccept(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
         votePower[msg.sender] -= 1;
-        votes[P_numbers].accept++;
+        proposals[P_numbers].accept++;
         checkMyStatus[msg.sender][P_numbers].count++;
         checkMyStatus[msg.sender][P_numbers].voteChecks = voteCheck.accept;
-    } // n번 안건 찬성 버튼을 누르면 작동?
+    } // n번 안건 찬성 버튼을 누르면 작동
 
     function openVotesDeny(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
         votePower[msg.sender] -= 1;
-        votes[P_numbers].deny++;
+        proposals[P_numbers].deny++;
         checkMyStatus[msg.sender][P_numbers].count++;
         checkMyStatus[msg.sender][P_numbers].voteChecks = voteCheck.deny;
-    } // n번 안건 반대 버튼을 누르면 작동?
-
-    function closeProposal(uint P_numbers) public {
-        require(block.timestamp >= votes[P_numbers].time + 2 weeks // 안건 제안 후 2주?? 가 지난 상태에서 제안자가 종료
-        && votes[P_numbers].maker == msg.sender || admin == msg.sender); // 또는, admin 이 직접 close 가능.
-        votes[P_numbers].status = true;
-        if(votes[P_numbers].accept > votes[P_numbers].deny 
-        /* && users * 50 / 100 =< votes[P_numbers].accept + votes[P_numbers].deny 
-        총 투표수가 전체 유저의 50% 이상이면서 찬성표가 반대표보다 많아야 passed. */){
-        votes[P_numbers].voteResults = voteResult.passed;
-        } else {
-        votes[P_numbers].voteResults = voteResult.rejected;
-        }
-    }
+    } // n번 안건 반대 버튼을 누르면 작동
 
     function userVoteCheck(uint P_numbers) public view returns(myStatus memory){
         return checkMyStatus[msg.sender][P_numbers]; 
@@ -105,6 +105,10 @@ contract governance {
 
     function getMyStatus(uint P_numbers) public view returns(uint){
         return checkMyStatus[msg.sender][P_numbers].count; // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
+    }
+
+    function getProposal(uint P_number) public view returns(proposal memory){
+        return proposals[P_number-1]; // 안건번호로 카운팅.
     }
 
     function Test_increasedVotePower() public {
