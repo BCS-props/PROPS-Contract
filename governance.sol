@@ -6,7 +6,7 @@ pragma solidity ^0.8.18;
 거버넌스 투표에서 생각해야 할 것.
 1. 투표권 갯수는 다른 컨트랙트에서
 2. 제안 넘버, 안건 생성 시간, 안건 제안자(지갑주소), 제목, 내용, 찬반, 상태
-3. 여러장의 투표권을 갖고 있는 유저에게 하나의 안건당 한번의 투표만 가능하게 할 것인가?
+3. 여러장의 투표권을 갖고 있는 유저에게 하나의 안건당 한번의 투표만 가능하게 할 것인가???
 */
 
 contract governance {
@@ -118,8 +118,8 @@ contract governance {
         return checkMyStatus[msg.sender][P_numbers].count; 
     } // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
 
-    function getProposal(uint P_number) public view returns(proposal memory){
-        return proposals[P_number-1]; 
+    function getProposal(uint P_numbers) public view returns(proposal memory){
+        return proposals[P_numbers-1]; 
     } // 안건번호로 카운팅.
 
     function Test_increasedVotePower() public {
