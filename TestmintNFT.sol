@@ -3,7 +3,7 @@ pragma solidity 0.8.18;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; 
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "./governance.sol";
 
@@ -43,10 +43,11 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
     }
     NFT_Data[] NFT_Datas;
 
+    ERC20 public token = ERC20(0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80); // test USDT CA
     string public URI;
     address insurPool;
     address governance_address;
-    uint tokenId;
+    uint tokenId = 1;
     uint LastMintedTime;
 
     mapping(address => mapping(uint => NFT_Data)) NFT;
@@ -65,22 +66,23 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
         return super.supportsInterface(interfaceId);
     }
 
-    function mintNFT_Cover() public payable {
+    function mintNFT_Cover(uint _a) public payable {
         address msgsender = msg.sender;
-        IERC20 token = IERC20(0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80);
-        uint coverPrice = msg.value * (priceFormula / 100);
+        uint coverPrice = _a * (priceFormula / 100);
         require(coverPrice <= token.balanceOf(msgsender),"Your balance is not enough.");
+
         token.transferFrom(msgsender, insurPool, coverPrice);
         totalSpend[msgsender] += coverPrice;
-        NFT_Datas.push(NFT_Data(block.timestamp, 1000 ,msg.value, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        NFT_Datas.push(NFT_Data(block.timestamp, 1000 , _a, true)); // 중간에 코인 가격 받아와서 넣어야 함
         governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
-        _mint(msgsender, ++tokenId);
+        _mint(msgsender, tokenId++);
     }
 
     function tokenURI(uint) public view override returns(string memory){
-        uint tokenIds = tokenId+1;
+        uint tokenIds = tokenId;
         return string(abi.encodePacked(URI, "/", Strings.toString(tokenIds), ".json"));
     } // uri 붙히는 작업
+        // 1달, 1년 짜리 계약
 
     function getTotalSpend(address _msgsender) public view returns(uint){
         return totalSpend[_msgsender];
@@ -95,4 +97,13 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
             return 3;
         }
     } // 민팅 비용에 따른 투표권 지급을 계산하는 함수
+
+    function claimCover(uint _tokenId) public {
+        require(NFT[msg.sender][_tokenId].isActive == true,"Your cover is expired.");
+        /* 코인 가격 가져오는 로직*/
+        token.transferFrom(address(this),msg.sender,NFT[msg.sender][_tokenId].coverAmount);
+    }
+
+    // governance ca > 0x4fc7Db345FA6f0C4725772a694ff1A3a49E2E738
+    // 2nd eoa > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
 }
