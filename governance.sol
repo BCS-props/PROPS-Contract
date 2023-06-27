@@ -3,41 +3,31 @@
 pragma solidity ^0.8.18;
 
 /*
-거버넌스 투표에서 생각해야 할 것.
-1. 투표권 갯수는 다른 컨트랙트에서
-2. 제안 넘버, 안건 생성 시간, 안건 제안자(지갑주소), 제목, 내용, 찬반, 상태
-3. 여러장의 투표권을 갖고 있는 유저에게 하나의 안건당 한번의 투표만 가능하게 할 것인가???
+    거버넌스 투표
+    1. 유저는 하나의 투표권을 사용하여 안건을 제안할 수 있다.
+    2. 유저는 제안된 안건 하나당 최대 3번을 투표할 수 있다.
+    3. 모든 안건은 2주가 지나면 종료된다. 프로젝트 초기에는 찬성이 반대보다 많다면 가결.
+        유저가 많아지면, 모든 유저수의 20% 만큼의 투표수를 받고 찬성이 반대보다 많아야 가결.
+        이 외에는 모두 부결처리. 유저가 많아지면, admin 유저가 changeRule 함수를 통해서 룰을 바꿀 수 있다..
 */
 
 contract governance {
     struct proposal {
         uint num; // 자동 카운팅
-        uint time; // 자동 카운팅
+        uint time; // 자동 카운팅 ==> 2주가 지나면 더이상 투표가 불가능. 2주가 지난다면 close 된 것으로 간주.(frontend 에서 처리..)
         address maker; // msg.sender
         string subject;
-        string detail;
+        string Abstract;
+        string method;
+        string conclusion;
         uint accept;
         uint deny;
-        bool status; // false : 진행중, true : 종료
-        voteResult voteResults;
     }
 
     struct myStatus { 
-        voteCheck voteChecks;
-        uint count;
-    } // 특정 유저의 정보
-    
-    enum voteResult {
-        inProgress,
-        passed,
-        rejected
-    }
-
-    enum voteCheck {
-        notYet,
-        accept,
-        deny
-    }
+        uint8 count;
+        uint8 accept;
+    } // 특정 유저의 정보 ( deny 투표수 = count - accept )
     
     proposal[] public proposals;
 
@@ -62,39 +52,27 @@ contract governance {
         mintNFTContract = _addr;
     } // mintNFT 컨트랙트 주소 설정
 
-    function openProposal(string memory _subject, string memory _detail) public checkVotePower {
+    function openProposal(string memory _subject, string memory _abstract, string memory _method, string memory _conclusion) public checkVotePower {
         votePower[msg.sender] -= 1;
         proposals.push( proposal ( ++P_number, block.timestamp, msg.sender,_subject, 
-        _detail, 0, 0, false, voteResult.inProgress ));
-    } // 안건 제안. 투표권을 1개 소모하고, 2주가 지나면 자동으로 종료 됨. 어떻게 자동종료..?
-
-    function closeProposal(uint P_numbers) public {
-        require(block.timestamp >= proposals[P_numbers].time + 2 weeks // 안건 제안 후 2주가 지난 상태에서 제안자가 종료
-        && proposals[P_numbers].maker == msg.sender || admin == msg.sender); // 또는, admin 이 직접 close 가능.
-        proposals[P_numbers].status = true;
-        if(proposals[P_numbers].accept > proposals[P_numbers].deny 
-        /* && users * 33 / 100 =< proposals[P_numbers].accept + proposals[P_numbers].deny 
-        총 투표수가 전체 유저의 33% 이상이면서 찬성표가 반대표보다 많아야 passed. */){
-        proposals[P_numbers].voteResults = voteResult.passed;
-        } else {
-        proposals[P_numbers].voteResults = voteResult.rejected;
-        }
-    }
+        _abstract, _method, _conclusion, 0, 0 ));
+    } // 안건 제안. 투표권을 1개 소모하고, 2주가 지나면 자동으로 종료 됨.
 
     function openVotesAccept(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
+        require(proposals[P_numbers].time + 2 weeks > block.timestamp,"This proposal is already closed.");
         votePower[msg.sender] -= 1;
         proposals[P_numbers].accept++;
         checkMyStatus[msg.sender][P_numbers].count++;
-        checkMyStatus[msg.sender][P_numbers].voteChecks = voteCheck.accept;
+        checkMyStatus[msg.sender][P_numbers].accept++;
     } // n번 안건 찬성 버튼을 누르면 작동
 
     function openVotesDeny(uint P_numbers) public checkVotePower {
         require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
+        require(proposals[P_numbers].time + 2 weeks > block.timestamp,"This proposal is already closed.");
         votePower[msg.sender] -= 1;
         proposals[P_numbers].deny++;
         checkMyStatus[msg.sender][P_numbers].count++;
-        checkMyStatus[msg.sender][P_numbers].voteChecks = voteCheck.deny;
     } // n번 안건 반대 버튼을 누르면 작동
 
     function increaseVotePower(uint _number, address _address) external {
@@ -119,7 +97,7 @@ contract governance {
     } // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
 
     function getProposal(uint P_numbers) public view returns(proposal memory){
-        return proposals[P_numbers-1]; 
+        return proposals[P_numbers]; 
     } // 안건번호로 카운팅.
 
     function Test_increasedVotePower() public {
