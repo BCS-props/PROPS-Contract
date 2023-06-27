@@ -66,12 +66,12 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
         return super.supportsInterface(interfaceId);
     }
 
-    function mintNFT_Cover(uint _a) public payable {
+    function mintNFT_Cover(uint _a) public {
         address msgsender = msg.sender;
-        uint coverPrice = _a * (priceFormula / 100);
+        uint coverPrice = _a * priceFormula / 1000;
         require(coverPrice <= token.balanceOf(msgsender),"Your balance is not enough.");
 
-        token.transferFrom(msgsender, insurPool, coverPrice);
+        token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msgsender] += coverPrice;
         NFT_Datas.push(NFT_Data(block.timestamp, 1000 , _a, true)); // 중간에 코인 가격 받아와서 넣어야 함
         governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
@@ -104,6 +104,12 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
         token.transferFrom(address(this),msg.sender,NFT[msg.sender][_tokenId].coverAmount);
     }
 
+    function setPriceFormula(uint8 _number) public {
+        require(msg.sender == insurPool,"Your are not Admin");
+        priceFormula = _number;
+    } // 커버 수수료 변경
+
     // governance ca > 0x4fc7Db345FA6f0C4725772a694ff1A3a49E2E738
     // 2nd eoa > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
+    // usdt 0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80
 }
