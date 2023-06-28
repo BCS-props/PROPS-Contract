@@ -22,6 +22,7 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
     governance governances;
 
     struct NFT_Data {
+        uint coverTerm; // 0 : 30일, 1: 365일
         uint mintTime;
         uint tokenPrice;
         uint coverAmount;
@@ -36,7 +37,6 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
     uint public tokenId = 1;
 
     mapping(address => uint) private totalSpend;
-    mapping(uint => uint) public totalVotePower;
     
     uint8 priceFormula_30 = 125; // 수수료율 1.25%
     uint8 priceFormula_365 = 100; // 수수료율 1.00%
@@ -53,44 +53,47 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
         return super.supportsInterface(interfaceId);
     }
 
-    function mintNFTCover_30(uint _a) public {
+    function mintNFT_Cover(uint _coverTerm, uint _amount) public {
         address msgsender = msg.sender;
-        uint coverPrice = _a * priceFormula_30 / 1000;
+        uint coverPrice;
+        if(_coverTerm == 0){ // 30일로 계산
+            coverPrice = _amount * priceFormula_30 / 10000;
+        } else if(_coverTerm == 1){ // 365일로 계산
+            coverPrice = _amount * priceFormula_365 / 10000; 
+        } else { // 다른 날짜 커버는 미완성이므로 revert
+            revert("It is the wrong approach."); 
+        }
         uint currentTokenPrice = 1000; // 코인 가격 from uniswap
         require(coverPrice <= token.balanceOf(msgsender),"Your balance is not enough.");
         require(coverPrice != 0,"Invaild Cover Price");
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msgsender] += coverPrice;
-        NFT_Datas.push(NFT_Data(block.timestamp, currentTokenPrice , _a, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        NFT_Datas.push(NFT_Data(_coverTerm, block.timestamp, currentTokenPrice , _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
         governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
         governances.increaseTotalVotePower(calculateVotePower(coverPrice));
         _mint(msgsender, tokenId++);
-    } // 30일 커버 | 민팅비 = 커버할 총량 * 1.25%
-
-    function mintNFTCover_365(uint _a) public {
-        address msgsender = msg.sender;
-        uint coverPrice = _a * priceFormula_365 / 1000;
-        uint currentTokenPrice = 1000; // 토큰 가격 from uniswap
-        require(coverPrice <= token.balanceOf(msgsender),"Your balance is not enough.");
-        require(coverPrice != 0,"Invaild Cover Price");
-
-        token.transferFrom(tx.origin, insurPool, coverPrice);
-        totalSpend[msgsender] += coverPrice;
-        NFT_Datas.push(NFT_Data(block.timestamp, currentTokenPrice , _a, true));
-        governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
-        governances.increaseTotalVotePower(calculateVotePower(coverPrice));
-        _mint(msgsender, tokenId++);
-    } // 365일 커버 | 민팅비 = 커버할 총량 * 1%
+    }   // 30일 커버 | 민팅비 = 커버할 총량 * 1.25%
+        // 365일 커버 | 민팅비 = 커버할 총량 * 1%
 
     function claimCover(uint _tokenId) public {
         require(msg.sender == ownerOf(_tokenId),"You are Not Owner of NFT."); // msg.sender 가 NFT 를 보유중인지 확인
-        require(NFT_Datas[_tokenId].isActive == true,"This cover is expired."); // NFT 가 유효한지 확인
-        uint currentTokenPrice = 1000; // 토큰 가격 from uniswap
+        if(NFT_Datas[_tokenId-1].coverTerm == 0){
+            require(NFT_Datas[_tokenId-1].isActive == true &&
+             NFT_Datas[_tokenId-1].mintTime + 2592000 > block.timestamp,"Your Cover expired.");
+        } // 30일 커버의 유효기간 확인 
+        else if(NFT_Datas[_tokenId-1].coverTerm == 1){
+            require(NFT_Datas[_tokenId-1].isActive == true && 
+            NFT_Datas[_tokenId-1].mintTime + 31536000 > block.timestamp,"Your Cover expired.");
+        } // 365일 커버의 유효기간 확인
 
-        // 코인 가격 가져오는 로직
-    
-        
+        uint currentTokenPrice = 1800; // @@@@@@@ 토큰 가격 from uniswap @@@@@@@@
+        require(NFT_Datas[_tokenId-1].tokenPrice * 50 / 100 >= currentTokenPrice
+        ,"Your Claim is not Accepted. Check current token price first."); 
+        // 현재 토큰 가격이 커버를 구매했을 당시 토큰 가격의 절반이라면, claim 해준다.
+        // 토큰 가격이 $2000, 10000 amount 만큼 커버를 구매함.
+        // 현재 가격이 $1000 이라면, 10000 amount 만큼 커버를 받는다?
+
         NFT_Datas[tokenId-1].isActive = false;
         token.transferFrom(address(this),msg.sender,NFT_Datas[tokenId-1].coverAmount);
     } // 보험금을 claim 하는 함수
@@ -150,7 +153,6 @@ contract Mint721Token is ERC721Enumerable, ERC2981 {
         }
     } // 민팅 비용에 따른 투표권 지급을 계산하는 함수 (internal)
 
-    // governance ca > 0x4fc7Db345FA6f0C4725772a694ff1A3a49E2E738
     // 2nd eoa > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
     // usdt > 0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80
     // uri > https://teal-individual-peafowl-274.mypinata.cloud/ipfs/QmazmBGmFZJBXp5RAY83wZMVfXdSdyoq4SJkwajKH4s3o1
