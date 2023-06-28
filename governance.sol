@@ -16,18 +16,20 @@ contract governance {
         uint num; // 자동 카운팅
         uint time; // 자동 카운팅 ==> 2주가 지나면 더이상 투표가 불가능. 2주가 지난다면 close 된 것으로 간주.(frontend 에서 처리..)
         address maker; // msg.sender
+            
         string subject;
-        string Abstract;
+        string summary;
         string method;
         string conclusion;
-        uint accept;
-        uint deny;
+
+        uint agree;
+        uint disagree;
     }
 
     struct myStatus { 
         uint8 count;
-        uint8 accept;
-    } // 특정 유저의 정보 ( deny 투표수 = count - accept )
+        uint8 agree;
+    } // 특정 유저의 정보 ( disagree 투표수 = count - agree )
     
     proposal[] public proposals;
 
@@ -42,8 +44,10 @@ contract governance {
         admin = _admin; 
     } // 관리자 지갑 주소 설정
 
-    modifier checkVotePower{ 
+    modifier checkVoteRequire(uint P_numbers) { 
+        require(proposals[P_numbers].time + 2 weeks > block.timestamp,"This proposal is already closed.");
         require(votePower[msg.sender] >= 1,"At least one voting power is required.");
+        require(checkMyStatus[msg.sender][P_numbers].count < 3,"Not allowed to vote on this proposal more than three times");
         _;
     } // 유저가 갖고 있는 투표 수 확인
 
@@ -52,26 +56,23 @@ contract governance {
         mintNFTContract = _addr;
     } // mintNFT 컨트랙트 주소 설정
 
-    function openProposal(string memory _subject, string memory _abstract, string memory _method, string memory _conclusion) public checkVotePower {
+    function openProposal(string memory _subject, string memory _summary, string memory _method, string memory _conclusion) public {
+        require(votePower[msg.sender] >= 1,"At least one voting power is required.");
         votePower[msg.sender] -= 1;
         proposals.push( proposal ( ++P_number, block.timestamp, msg.sender,_subject, 
-        _abstract, _method, _conclusion, 0, 0 ));
+        _summary, _method, _conclusion, 0, 0 ));
     } // 안건 제안. 투표권을 1개 소모하고, 2주가 지나면 자동으로 종료 됨.
 
-    function openVotesAccept(uint P_numbers) public checkVotePower {
-        require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
-        require(proposals[P_numbers].time + 2 weeks > block.timestamp,"This proposal is already closed.");
+    function openVotesagree(uint P_numbers) public checkVoteRequire(P_numbers) {
         votePower[msg.sender] -= 1;
-        proposals[P_numbers].accept++;
+        proposals[P_numbers].agree++;
         checkMyStatus[msg.sender][P_numbers].count++;
-        checkMyStatus[msg.sender][P_numbers].accept++;
+        checkMyStatus[msg.sender][P_numbers].agree++;
     } // n번 안건 찬성 버튼을 누르면 작동
 
-    function openVotesDeny(uint P_numbers) public checkVotePower {
-        require(checkMyStatus[msg.sender][P_numbers].count < 4,"Not allowed to vote on this proposal more than three times");
-        require(proposals[P_numbers].time + 2 weeks > block.timestamp,"This proposal is already closed.");
+    function openVotesdisagree(uint P_numbers) public checkVoteRequire(P_numbers) {
         votePower[msg.sender] -= 1;
-        proposals[P_numbers].deny++;
+        proposals[P_numbers].disagree++;
         checkMyStatus[msg.sender][P_numbers].count++;
     } // n번 안건 반대 버튼을 누르면 작동
 
@@ -97,7 +98,7 @@ contract governance {
     } // 유저가 n번째 안건에 몇번 투표했는지 값 불러오기
 
     function getProposal(uint P_numbers) public view returns(proposal memory){
-        return proposals[P_numbers]; 
+        return proposals[P_numbers-1]; 
     } // 안건번호로 카운팅.
 
     function Test_increasedVotePower() public {
