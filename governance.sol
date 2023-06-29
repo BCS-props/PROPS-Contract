@@ -82,13 +82,9 @@ contract governance {
 
     function increaseVotePower(uint _number, address _address) external {
         require(msg.sender == mintNFTContract); // 민팅 컨트랙트에서만 호출 가능
+        totalVotePower += _number;
         votePower[_address] += _number;
     } // NFT 구매 시, 투표권 증가시키는 함수. 다른 컨트랙트에서 사용됨.
-
-    function increaseTotalVotePower(uint _number) external {
-        require(msg.sender == mintNFTContract); // 민팅 컨트랙트에서만 호출 가능
-        totalVotePower += _number;
-    }
 
     function userVoteCheck(uint P_numbers) public view returns(myStatus memory){
         return checkMyStatus[msg.sender][P_numbers]; 
@@ -115,6 +111,7 @@ contract governance {
     } // 유저들이 소유한 모든 투표수를 반환.
 
     function Test_increasedVotePower() public {
-        votePower[msg.sender] += 3;
+        votePower[msg.sender] += 5;
+        totalVotePower += 5;
     } // 테스트를 위해 만든 버튼!!!!!
 }
