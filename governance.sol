@@ -98,8 +98,8 @@ contract governance {
         return P_number; 
     } // 현재 제안된 안건의 갯수 반환.
 
-    function getMyStatus(uint P_numbers) public view returns(uint){
-        return checkMyStatus[msg.sender][P_numbers].count; 
+    function getMyStatus(uint P_numbers, address msgsender) public view returns(uint){
+        return checkMyStatus[msgsender][P_numbers].count; 
     } // 유저가 n번째 안건에 몇번 투표했는지 반환.
 
     function getProposal(uint P_numbers) public view returns(proposal memory){
@@ -111,7 +111,7 @@ contract governance {
     } // 유저들이 소유한 모든 투표수를 반환.
 
     function Test_increasedVotePower() public {
-        votePower[msg.sender] += 5;
-        totalVotePower += 5;
+        votePower[msg.sender] += 10;
+        totalVotePower += 10;
     } // 테스트를 위해 만든 버튼!!!!!
 }
