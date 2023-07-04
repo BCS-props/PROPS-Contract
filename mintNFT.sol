@@ -30,7 +30,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     }
 
     NFT_Data[] private NFT_Datas;
-    ERC20 public token = ERC20(0xBd8C68BFC0Dc66C639B9CbD3AE65bEb94DE300a5); // test USDT CA
+    ERC20 public token = ERC20(0x22780536e206932B4Ddc090bb364fca9aCd10767); // test USDT CA
     string public baseURI;
     address public insurPool;
     address public admin;
@@ -42,7 +42,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     uint16 priceFormula_365 = 760; // 수수료율 7.60% | daily 0.0208%
 
     constructor(string memory _baseUri, address _insurPool, address _governance_address, address _admin) ERC721("InsurSand","IS"){
-        getBalances = getBalance(0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93); // 토큰 가격 가져오기 위한 CA 설정
+        getBalances = getBalance(0xB7Eb1cd21c39791Ca61a2A6FFf510248840b71E1); // 토큰 가격 가져오기 위한 CA 설정
         baseURI = _baseUri;
         insurPool = _insurPool; // 보험 기금 풀
         governances = governance(_governance_address); // 거버넌스 투표 컨트랙트
@@ -52,7 +52,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721URIStorage, ERC2981) returns (bool) {
         return super.supportsInterface(interfaceId);
-    }
+    } // 11009716
 
     function mintNFT_Cover(uint8 _coverTerm, uint _amount, string memory _ipfsHash) public {
         address msgsender = msg.sender;
@@ -66,7 +66,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         }
 
         (uint token1, uint token2) = getBalances.getPoolBalances(); // 토큰 가격 계산 from uniswap
-        uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량
+        uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량 | 1 WETH = 341,174 DAI
+        // uint currentTokenPrice = 4000; 로컬 테스트용
 
         require(coverPrice <= token.balanceOf(msgsender),"Insufficient balances.");
         require(coverPrice != 0,"Invaild Cover Price");
@@ -93,15 +94,17 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
             NFT_Datas[_tokenId].mintTime + 31536000 > block.timestamp,"Your Cover expired.");
         } // 365일 커버의 유효기간 확인
 
-        uint currentTokenPrice = 1800; // @@@@@@@ 토큰 가격 from uniswap @@@@@@@@
+        (uint token1, uint token2) = getBalances.getPoolBalances(); // 토큰 가격 계산 from uniswap
+        uint currentTokenPrice = (token1 / token2) / 3; // WETH 가격 = DAI 예치량 / WETH 예치량 / 3 | 1 WETH = 113,724 DAI
+        // uint currentTokenPrice = 1800; 로컬 테스트용
+
         require(NFT_Datas[_tokenId].tokenPrice * 50 / 100 >= currentTokenPrice
         ,"Your Claim is not Accepted. Check current token price first."); 
         // 현재 토큰 가격이 커버를 구매했을 당시 토큰 가격의 절반이라면, claim 해준다.
-        // 토큰 가격이 $2000, 10000 amount 만큼 커버를 구매함.
-        // 현재 가격이 $1000 이라면, 10000 amount 만큼 커버를 받는다?
 
-        NFT_Datas[tokenId].isActive = false;
-        token.transferFrom(address(this),msg.sender,NFT_Datas[tokenId].coverAmount);
+        NFT_Datas[_tokenId].isActive = false;
+        token.transfer(msg.sender, NFT_Datas[_tokenId].coverAmount / 2); // 절반을 보상으로 지급
+        // 여기에 NFT 이미지 변경하는 _setTokenURI(_tokenId, string(abi.encodePacked(baseURI, _ipfsHash))); 함수 넣기
     } // 보험금을 claim 하는 함수
 
     function setPriceFormula(uint8 _setFormula_30, uint8 _setFormula_365) public {
@@ -151,7 +154,12 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         }
     } // 민팅 비용에 따른 투표권 지급을 계산하는 함수 (internal)
 
+    function getCoverAmount(uint _tokenId) public view returns(NFT_Data memory) {
+        require(ownerOf(_tokenId) == msg.sender,"You are not owner of NFT.");
+        return NFT_Datas[_tokenId];
+    } // 특정 토큰에 대한 정보를 반환
+
     // 2nd eoa > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
-    // usdt > 0x078d1B0B379d1c76C9944Fa6ed5eEdf11D6A4D80
+    // usdt > 0x22780536e206932B4Ddc090bb364fca9aCd10767
     // uri > https://teal-individual-peafowl-274.mypinata.cloud/ipfs/QmazmBGmFZJBXp5RAY83wZMVfXdSdyoq4SJkwajKH4s3o1
 }
