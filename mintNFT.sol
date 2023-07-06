@@ -8,21 +8,12 @@ import "./governance.sol";
 import "./getTokenByUniswap.sol";
 
 /*
-    보험료 계산 (nexus mutual) => 사실상 운영팀이 알아서 결정함.
-    ***보험료 = bumpedPrice - priceDrop 
-    ***bumpedPrice = spotPrice + capacity% of the pool to be used / 1% x 0.2
-    ***bumpedPrice = 0.5% + 1% = 1.5%
-    ***priceDrop = timeSinceLastCoverBuy * speed
-    ***priceDrop = 0.5 days * 0.5% = 0.25%
     --------------------------------------------------------------------------------
-*/
-
-/*
     보험 가입자가 토큰 20개를 들고있거나, 조만간 20개를 사서 투자하고 싶음. 현재 20개의 토큰 가치는 200불이다.
     그런데, 그냥 현물 투자를 하기엔 너무 리스크가 큼. 가격이 20% 정도 하락할 수도 있다는 생각을 하고 보험 가입 서비스를 이용하러 옴.
 
-    1. 20개의 토큰가치인 200불(200 usdt) 을 갖고있는지 확인 ? ==> 굳이 해야 하나?
-    2. 200불의 20% 를 커버 보험 가입으로 사용 ? ==> 굳이 200불이 있는지 확인 해야하나? 40불만큼의 보험료만 납부하면 문제 없는 것 아닌가?
+    1. 20개의 토큰가치인 200불(200 usdt) 을 갖고있는지 확인.
+    2. 200불의 20% 를 커버 보험 가입으로 사용.
     3. (40불 * 기간별, 토큰별 보혐료율) 적용 한 금액을 보험료로 납부, NFT 를 민팅함
     4. 얼마 후, 민팅 시의 가격에서 20% 하락. 보험금 청구하러 옴
     5. 청구할 때, 필요한 정보들 => 기간, 토큰타입(가격확인), 얼마만큼의 보험금을 청구할지
@@ -41,9 +32,17 @@ import "./getTokenByUniswap.sol";
     2. 유효한가? (기간, 이미 청구했는지)(term, minttime, isActive 확인)
     3. 토큰의 가격이 20% 만큼 하락했는가? (ratio, type 확인)
     확인 후 coverAmount * ratio 만큼을 msg.sender 에게 지급함.
+    --------------------------------------------------------------------------------
+    보험료 계산 (nexus mutual) => 사실상 운영팀이 알아서 결정함.
+    ***보험료 = bumpedPrice - priceDrop 
+    ***bumpedPrice = spotPrice + capacity% of the pool to be used / 1% x 0.2
+    ***bumpedPrice = 0.5% + 1% = 1.5%
+    ***priceDrop = timeSinceLastCoverBuy * speed
+    ***priceDrop = 0.5 days * 0.5% = 0.25%
 
-    * 토큰마다 보험료를 다르게 적용해야 함.
-    ** 사용자가 지정한 하락률마다 보험료를 적용해야 함.
+    * 토큰마다 보험료를 다르게 적용함. (wETH + 0%, UNI + 10%)
+    ** 사용자가 지정한 하락률마다 보험료를 적용함 ( 30일 10~15% 구간 할증, 365일 10~20% 구간 할증 )
+    --------------------------------------------------------------------------------
 */
 
 contract Mint721Token is ERC721URIStorage, ERC2981 {
@@ -63,6 +62,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     NFT_Data[] private NFT_Datas;
     ERC20 public token = ERC20(0x617489EDf1b0E9546D34aA50f22194F582E17f81); // test USDT CA
+    // ERC20 public token_wETH = ERC20(0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6); // test wETH CA (테스트 넷이므로 사용하지 않아 주석처리)
+    // ERC20 public token_UNI = ERC20(0x1f9840a85d5af5bf1d1762f925bdaddc4201f984); // test UNI CA 0x1f9840a85d5af5bf1d1762f925bdaddc4201f984
     string public baseURI;
     address public insurPool;
     address public admin;
@@ -88,68 +89,53 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return super.supportsInterface(interfaceId);
     }
 
-    // wETH 가격 하락에 대한 커버를 민팅하는 함수
+    // wETH 가격 하락에 대한 커버를 민팅하는 함수 ( 30일 : _coverRatio 10~15% 구간, 365일은 10~20% 구간이 제일 비쌈 )
     function mintNFTCover_wETH(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
-        address msgsender = msg.sender;
-        uint coverPrice;
-        uint realCoverAmount = _amount * _coverRatio / 100; // claim 시 받을 수 있는 금액
-
-        if(_coverTerm == 0){ // 30일로 계산
-            coverPrice = (priceFormula_30 * 10 - getPercentage(_amount)) * _amount / 100000;
-        } else if(_coverTerm == 1){ // 365일로 계산
-            coverPrice = (priceFormula_365 * 10 - getPercentage(_amount)) * _amount / 100000;
-        } else { // 다른 날짜 커버는 미완성이므로 revert
-            revert("It is the wrong approach."); 
-        }
-
-        if(_amount >= 5100){
-            _amount - 5000 / 100;
-        }
-
-        coverPrice = (priceFormula_365 * 10 - getPercentage(realCoverAmount)) * realCoverAmount / 100000 ;
+        
+        uint wETHFee = 100; // wETH 토큰의 가중치 1
+        uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
+        coverPrice *= wETHFee / 100;
 
         (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // 토큰 가격 계산 from uniswap
         uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량 | 1 WETH = 341,174 DAI
 
-        require(_amount <= token.balanceOf(msgsender),"Insufficient balances.");
-        require(coverPrice <= token.balanceOf(msgsender),"Insufficient balances.");
-        require(coverPrice != 0,"Invaild Cover Price");
+        // wETH 보유량 확인 ( 테스트넷이기에 사용하면 민팅 테스트가 불가능하므로 주석처리 )
+        // require(_amount <= token_wETH.balanceOf(msg.sender),"Insufficient balances.");
+
+        require(coverPrice <= token.balanceOf(msg.sender),"Insufficient balances.");
+        require(coverPrice >= 1,"Invaild Cover Price");
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
-        totalSpend[msgsender] += coverPrice;
+        totalSpend[msg.sender] += coverPrice;
         NFT_Datas.push(NFT_Data(_coverTerm, _coverRatio, 0, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
-        governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
+        governances.increaseVotePower(calculateVotePower(coverPrice), msg.sender);
 
-        _mint(msgsender, tokenId);
+        _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
     }
 
     // UNI 가격 하락에 대한 커버를 민팅하는 함수
     function mintNFTCover_UNI(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
-        address msgsender = msg.sender;
-        uint coverPrice;
 
-        if(_coverTerm == 0){ // 30일로 계산
-            coverPrice = (priceFormula_30 * 10 - getPercentage(_amount)) * _amount / 100000;
-        } else if(_coverTerm == 1){ // 365일로 계산
-            coverPrice = (priceFormula_365 * 10 - getPercentage(_amount)) * _amount / 100000;
-        } else { // 다른 날짜 커버는 미완성이므로 revert
-            revert("It is the wrong approach."); 
-        }
+        uint UNIFee = 110; // wETH 토큰의 가중치 10%
+        uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
+        coverPrice *= UNIFee / 100;
 
         (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // 토큰 가격 계산 from uniswap
-        uint currentTokenPrice = token1 / token2; // UNI 가격 = DAI 예치량 / UNI 예치량 | 1 WETH = 341,174 DAI
+        uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량 | 1 WETH = 341,174 DAI
 
-        require(_amount <= token.balanceOf(msgsender),"Insufficient balances.");
-        require(coverPrice <= token.balanceOf(msgsender),"Insufficient balances.");
-        require(coverPrice != 0,"Invaild Cover Price");
+        // UNI 보유량 확인 ( 테스트넷이기에 사용하면 민팅 테스트가 불가능하므로 주석처리 )
+        // require(_amount <= token_UNI.balanceOf(msg.sender),"Insufficient balances.");
+
+        require(coverPrice <= token.balanceOf(msg.sender),"Insufficient balances.");
+        require(coverPrice >= 1,"Invaild Cover Price");
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
-        totalSpend[msgsender] += coverPrice;
-        NFT_Datas.push(NFT_Data(_coverTerm, _coverRatio, 1, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
-        governances.increaseVotePower(calculateVotePower(coverPrice), msgsender);
+        totalSpend[msg.sender] += coverPrice;
+        NFT_Datas.push(NFT_Data(_coverTerm, _coverRatio, 0, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        governances.increaseVotePower(calculateVotePower(coverPrice), msg.sender);
 
-        _mint(msgsender, tokenId);
+        _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
     }
 
@@ -166,28 +152,28 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         else if(NFT_Datas[_tokenId].coverTerm == 1){
             require(NFT_Datas[_tokenId].isActive == true && 
             NFT_Datas[_tokenId].mintTime + 31536000 > block.timestamp,"Your Cover expired.");
-        } 
+        }
 
         // wETH 의 claim 조건 확인 (현재 wETH 의 가격을 불러옴)
-        if(NFT_Datas[_tokenId].tokenType == 0){ 
+        if(NFT_Datas[_tokenId].tokenType == 0){
             (uint token1, uint token2) = getWETHBalance.getPoolBalances();
-            uint currentTokenPrice = (token1 / token2) / 3; // WETH 가격 = DAI 예치량 / WETH 예치량 / 3 | 1 wETH 가격 : 약 342,830 DAI
-            require(NFT_Datas[_tokenId].tokenPrice * 50 / 100 >= currentTokenPrice
+            uint currentTokenPrice = (token1 / token2) / 5; // claim 을 테스트하기 위해 /5
+            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
             ,"Your claim request is not Accepted. Check current token price first.");
 
         // UNI 의 claim 조건 확인 (현재 UNI 의 가격을 불러옴)
-        } else if(NFT_Datas[_tokenId].tokenType == 1){ 
+        } else if(NFT_Datas[_tokenId].tokenType == 1){
             (uint token1, uint token2) = getUNIBalance.getPoolBalances();
-            uint currentTokenPrice = (token1 / token2) / 3; // UNI 가격 = DAI 예치량 / UNI 예치량 / 3 | 1 UNI 가격 : 약 32,687 DAI 
-            require(NFT_Datas[_tokenId].tokenPrice * 50 / 100 >= currentTokenPrice
+            uint currentTokenPrice = (token1 / token2) / 5; // claim 을 테스트하기 위해 /5
+            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
             ,"Your claim request is not Accepted. Check current token price first.");
         } else { // 다른 토큰의 커버는 미완성이므로 revert
             revert("It is the wrong approach.");
         }
 
         NFT_Datas[_tokenId].isActive = false;
-        token.transfer(msg.sender, NFT_Datas[_tokenId].coverAmount / 2); // 절반을 보상으로 지급
-        // 여기에 NFT 이미지 변경하는 _setTokenURI(_tokenId, string(abi.encodePacked(baseURI, _ipfsHash))); 함수 넣기
+        token.transfer(msg.sender, NFT_Datas[_tokenId].coverAmount * NFT_Datas[_tokenId].coverRatio / 100);
+        // 여기에 NFT 이미지를 expired 로 변경하는 _setTokenURI(_tokenId, string(abi.encodePacked(baseURI, _ipfsHash))); 함수 넣기
     } 
 
     // 커버 수수료 및 할인율 변경
@@ -255,6 +241,35 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
             return 0;
         }
         return percentage;
+    }
+
+    // 보험료 계산 함수
+    function calculateCoverFee(uint8 _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
+        require(_coverRatio >= 10 && _coverRatio <= 90,"Cover ratio is available 10 to 90");
+        uint coverPrice; // 커버 구매 시 내야 할 금액
+        uint RCVDAmount = _amount * _coverRatio / 100; // claim 시 받을 수 있는 금액
+
+        // 커버기간 30일인 경우 10~15% 구간이 제일 비쌈
+        if(_coverTerm == 0){
+            if(_coverRatio < 16) {
+            uint ratioWeight = 90 - _coverRatio; 
+            coverPrice = (priceFormula_30 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 625 / 1000000000;
+        } else {
+            uint ratioWeight = 90 - _coverRatio; 
+            coverPrice = (priceFormula_30 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 312 / 1000000000;
+        }
+
+        // 커버기간 365일인 경우 10~20% 구간이 제일 비쌈
+        } else if(_coverTerm == 1) {
+            if(_coverRatio < 21) {
+            uint ratioWeight = 90 - _coverRatio; 
+            coverPrice = (priceFormula_365 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 625 / 1000000000;
+        } else {
+            uint ratioWeight = 90 - _coverRatio; 
+            coverPrice = (priceFormula_365 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 312 / 1000000000;
+        }
+        }
+        return coverPrice;
     }
 
     // 특정 토큰에 대한 정보를 반환
