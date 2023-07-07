@@ -97,13 +97,12 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
         coverPrice = coverPrice * wETHFee / 100;
 
-        (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // 토큰 가격 계산 from uniswap
-        uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량 | 1 WETH = 341,174 DAI
+        (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // wETH 가격 계산 from uniswap
+        uint currentTokenPrice = token1 / token2; // wETH 가격 = DAI 예치량 / WETH 예치량 | 1 wETH = 341,174 DAI
 
-        // wETH 보유량 확인 ( 테스트넷이기에 사용하면 민팅 테스트가 불가능하므로 주석처리 )
-        // require(_amount <= token_wETH.balanceOf(msg.sender),"Insufficient balances.");
-
-        require(coverPrice <= token.balanceOf(msg.sender),"Insufficient balances.");
+        // 보유한 wETH 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
+        require(/*_amount <= token_wETH.balanceOf(msg.sender) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
+        _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
         require(coverPrice >= 1,"Invaild Cover Price");
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
@@ -119,17 +118,16 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     function mintNFTCover_UNI(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
         require(_coverRatio >= 10 && _coverRatio <= 90,"Cover Ratio is available 10 to 90.");
 
-        uint UNIFee = 110; // wETH 토큰의 가중치 10%
+        uint UNIFee = 110; // UNI 토큰의 가중치 10%
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
         coverPrice = coverPrice * UNIFee / 100;
 
-        (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // 토큰 가격 계산 from uniswap
-        uint currentTokenPrice = token1 / token2; // WETH 가격 = DAI 예치량 / WETH 예치량 | 1 WETH = 341,174 DAI
+        (uint token1, uint token2) = getWETHBalance.getPoolBalances(); // UNI 가격 계산 from uniswap
+        uint currentTokenPrice = token1 / token2; // UNI 가격 = DAI 예치량 / UNI 예치량 | 1 UNI = 32,964 DAI
 
-        // UNI 보유량 확인 ( 테스트넷이기에 사용하면 민팅 테스트가 불가능하므로 주석처리 )
-        // require(_amount <= token_UNI.balanceOf(msg.sender),"Insufficient balances.");
-
-        require(coverPrice <= token.balanceOf(msg.sender),"Insufficient balances.");
+        // 보유한 UNI 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
+        require(/*_amount <= token_UNI.balanceOf(msg.sender) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
+        _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
         require(coverPrice >= 1,"Invaild Cover Price");
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
