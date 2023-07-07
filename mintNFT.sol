@@ -185,6 +185,12 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         priceDiscount = _priceDiscount;
     }
 
+    // 거버넌스 address 변경
+    function setGovernanceAddress(address _addr) public {
+        require(msg.sender == admin,"Admin only.");
+        governances = governance(_addr);
+    }
+
     // 총 커버 금액 (만료된 커버 포함)
     function getTotalCoverAmount() public view returns(uint){
         uint TotalCoverAmount;
@@ -203,7 +209,13 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
             }
         }
         return TotalActiveCoverAmount;
-    } 
+    }
+
+    // 특정 tokenId 의 NFT Data 를 반환
+    function getNFTDatas(uint _tokenId) public view returns(NFT_Data memory){
+        require(msg.sender == ownerOf(_tokenId),"You are not owner of NFT.");
+        return NFT_Datas[_tokenId];
+    }
         
     // 보험 구매에 사용한 금액 총액
     function getTotalSpend(address _msgsender) public view returns(uint){
@@ -293,7 +305,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         (uint token1, uint token2) = getUNIBalance.getPoolBalances();
         uint currentTokenPrice = token1 / token2;
         return currentTokenPrice;
-    } 
+    }
 
     // insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
     // usdt > 0x617489EDf1b0E9546D34aA50f22194F582E17f81
@@ -304,7 +316,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // 현재 배포, 프론트에서 사용중인 컨트랙트들 => 07.07.2023
     // erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
-    // gov - 0x8F22bfb57fBF9eF5d2dedb56589b22A2BCC7A5fe
-    // nft - 0x9C3052Cc63f14d0Fe84183899277D496376AB10E
+    // gov - 0xC55a3701D0f6ec8064e46fc49013f0EaEE99554E
+    // nft - 0x48780bcc6574134FaB9abd87101C7babD6D901fA
     // getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
 }
