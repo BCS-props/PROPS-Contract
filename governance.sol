@@ -35,10 +35,10 @@ contract governance {
 
     mapping(address => mapping(uint => myStatus)) checkMyStatus; // 내 투표 확인하기
     mapping(address => uint) votePower; // 투표권 갯수
-    uint totalVotePower; // 유저들이 갖고 있는 총 투표권 갯수
+    uint public totalVotePower; // 유저들이 갖고 있는 총 투표권 갯수
     
-    address mintNFTContract;
-    address admin;
+    address public mintNFTContract;
+    address public admin;
     uint public P_number; // 제안된 안건 수.
 
     // 관리자 지갑 주소 설정
@@ -52,7 +52,7 @@ contract governance {
         require(votePower[msg.sender] >= 1,"At least one voting power is required.");
         require(checkMyStatus[msg.sender][P_numbers].count < 3,"Not allowed to vote on this proposal more than three times");
         _;
-    } 
+    }
 
     // mintNFT 컨트랙트 주소 설정
     function setMintNFTContract(address _addr) public {
@@ -96,7 +96,7 @@ contract governance {
     // n번 안건에 투표 했는지 확인.
     function userVoteCheck(uint P_numbers, address _msgsender) public view returns(myStatus memory){
         return checkMyStatus[_msgsender][P_numbers]; 
-    } 
+    }
 
     // 유저의 투표권 갯수 반환.
     function getVotePower(address msgsender) public view returns(uint){
