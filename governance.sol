@@ -94,8 +94,8 @@ contract governance {
     } 
 
     // n번 안건에 투표 했는지 확인.
-    function userVoteCheck(uint P_numbers) public view returns(myStatus memory){
-        return checkMyStatus[msg.sender][P_numbers]; 
+    function userVoteCheck(uint P_numbers, address _msgsender) public view returns(myStatus memory){
+        return checkMyStatus[_msgsender][P_numbers]; 
     } 
 
     // 유저의 투표권 갯수 반환.
@@ -109,8 +109,8 @@ contract governance {
     } 
 
     // 유저가 n번째 안건에 몇번 투표했는지 반환.
-    function getMyStatus(uint P_numbers) public view returns(uint){
-        return checkMyStatus[msg.sender][P_numbers].count; 
+    function getMyStatus(uint P_numbers, address _msgsender) public view returns(uint){
+        return checkMyStatus[_msgsender][P_numbers].count; 
     } 
 
     // 안건번호로 카운팅.
