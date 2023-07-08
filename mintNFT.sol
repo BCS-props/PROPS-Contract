@@ -243,6 +243,13 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
             return 3;
         }
     }
+    
+    // 보험료를 %로 나타내는 함수.
+    function getCoverFees(uint8 _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
+        uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount);
+        uint coverFees = coverPrice * 1000000 / _coverRatio / _amount;
+        return coverFees;
+    }
 
     // 보험료 계산 함수
     function calculateCoverFee(uint8 _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
