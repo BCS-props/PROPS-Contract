@@ -126,7 +126,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         uint currentTokenPrice = token1 / token2; // UNI 가격 = DAI 예치량 / UNI 예치량 | 1 UNI = 32,964 DAI
 
         // 보유한 UNI 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
-        require(/*_amount <= token_UNI.balanceOf(msg.sender) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
+        require(/*_amount <= token_UNI.balanceOf(msg.sender) * (10 ** 18) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
         _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
         require(coverPrice >= 1,"Invaild Cover Price");
 
@@ -244,42 +244,41 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         }
     }
 
-    // 5000불 이상의 할인율 계산 함수
-    function getPercentage(uint _amount) public pure returns(uint) {
-        uint percentage;
+    // 보험료 계산 함수
+    function calculateCoverFee(uint8 _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
+        uint coverPrice; // 커버 구매 시 내야 할 금액
+        uint percentage; // 커버액 5100 불 이상의 할인율 적용
+
         if(_amount >= 5100){
             uint discount = _amount - 5000;
             percentage = discount / 100;
         } else {
-            return 0;
+            percentage = 0;
         }
-        return percentage;
-    }
-
-    // 보험료 계산 함수
-    function calculateCoverFee(uint8 _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
-        uint coverPrice; // 커버 구매 시 내야 할 금액
-        uint RCVDAmount = _amount * _coverRatio / 100; // claim 시 받을 수 있는 금액
 
         // 커버기간 30일인 경우 10~15% 구간이 제일 비쌈
         if(_coverTerm == 0){
             if(_coverRatio < 16) {
-                uint ratioWeight = 90 - _coverRatio; 
-                coverPrice = (priceFormula_365 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 625 / 10000000000;
+                uint ratioWeight = 91 - _coverRatio;
+                uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
+                coverPrice = prePrice * 625 / 100000000;
             }
             else {
-                uint ratioWeight = 90 - _coverRatio; 
-                coverPrice = (priceFormula_30 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 312 / 1000000000;
+                uint ratioWeight = 91 - _coverRatio; 
+                uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
+                coverPrice = prePrice * 312 / 10000000;
             }
         // 커버기간 365일인 경우 10~20% 구간이 제일 비쌈
         } else if(_coverTerm == 1){
                 if(_coverRatio < 21) {
-                uint ratioWeight = 90 - _coverRatio; 
-                coverPrice = (priceFormula_30 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 625 / 1000000000;
+                uint ratioWeight = 91 - _coverRatio; 
+                uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
+                coverPrice = prePrice * 625 / 10000000;
             }
             else {
-                uint ratioWeight = 90 - _coverRatio; 
-                coverPrice = (priceFormula_365 * 10 - getPercentage(RCVDAmount)) * ratioWeight * _amount * 312 / 10000000000;
+                uint ratioWeight = 91 - _coverRatio; 
+                uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
+                coverPrice =  prePrice * 312 / 100000000;
             }
         } else {
             revert("It is wrong approach.");
@@ -291,7 +290,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     function getCoverAmount(uint _tokenId) public view returns(NFT_Data memory) {
         require(ownerOf(_tokenId) == msg.sender,"You are not owner of NFT.");
         return NFT_Datas[_tokenId];
-    } 
+    }
 
     // 현재 wETH 가격 반환
     function getWETHBalances() public view returns(uint) {
@@ -307,16 +306,36 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return currentTokenPrice;
     }
 
-    // insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
-    // usdt > 0x617489EDf1b0E9546D34aA50f22194F582E17f81
-    // BaseUri > https://teal-individual-peafowl-274.mypinata.cloud/ipfs/
+    // tokenURI 값 반환
+    function getTokenURI(address msgsender) public view returns(string[] memory){
+        string[] memory uriStorages = new string[](balanceOf(msgsender));
+        uint count;
 
-    // uniswap pool DAI / wETH > 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
-    // uniswap pool DAI / UNI > 0x418b2be7F5ABE9a7104f503F8FCf25192A5e091f
+        for(uint i ; tokenId > i ; i++){
+            if(keccak256(abi.encodePacked(ownerOf(i))) == keccak256(abi.encodePacked(msgsender))) {
+                uriStorages[count] = tokenURI(i);
+                count++;
+            }
+        }
+        return uriStorages;
+    }
 
-    // 현재 배포, 프론트에서 사용중인 컨트랙트들 => 07.07.2023
-    // erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
-    // gov - 0xC55a3701D0f6ec8064e46fc49013f0EaEE99554E
-    // nft - 0x48780bcc6574134FaB9abd87101C7babD6D901fA
-    // getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
+    /* 
+    insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
+    usdt > 0x617489EDf1b0E9546D34aA50f22194F582E17f81
+    BaseUri > https://teal-individual-peafowl-274.mypinata.cloud/ipfs/
+
+    uniswap pool DAI / wETH > 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
+    uniswap pool DAI / UNI > 0x418b2be7F5ABE9a7104f503F8FCf25192A5e091f
+
+    현재 배포, 프론트에서 사용중인 컨트랙트들 => 07.07.2023
+    erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
+    gov - 0xC55a3701D0f6ec8064e46fc49013f0EaEE99554E
+    nft - 0x48780bcc6574134FaB9abd87101C7babD6D901fA
+    getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
+
+    아래는 리도 스테이킹의 read as proxy 32번
+    https://goerli.etherscan.io/address/0xCF117961421cA9e546cD7f50bC73abCdB3039533#readProxyContract
+    [[3000000000000000,2578262413543717,0x9d8E21A936D09Ffdd2963B0795Af581849D849Ab,1688806488,false,false]]
+    */
 }
