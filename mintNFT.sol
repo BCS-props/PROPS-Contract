@@ -314,16 +314,23 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         for(uint i ; tokenId > i ; i++){
             if(keccak256(abi.encodePacked(ownerOf(i))) == keccak256(abi.encodePacked(msgsender))) {
-                uriStorages[count] = tokenURI(i);
-                count++;
+                uriStorages[count++] = tokenURI(i);
             }
         }
         return uriStorages;
     }
 
     // 유저가 가진 tokenId 값 반환
-    function getTokenId(address msgsender) public view returns(uint){
-        
+    function getTokenId(address msgsender) public view returns(uint[] memory){
+        uint[] memory tokenIdStorage = new uint[](balanceOf(msgsender));
+        uint count;
+
+        for(uint i ; tokenId > i ; i++){
+            if(keccak256(abi.encodePacked(ownerOf(i))) == keccak256(abi.encodePacked(msgsender))){
+                tokenIdStorage[count++] = i;
+            }
+        }
+        return tokenIdStorage;
     }
 
     /* 
