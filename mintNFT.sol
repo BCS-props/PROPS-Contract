@@ -168,8 +168,6 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
             uint currentTokenPrice = (token1 / token2) / 10; // claim 을 테스트하기 위해 /10
             require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
             ,"Your claim request is not Accepted. Check current token price first.");
-        } else { // 다른 토큰의 커버는 미완성이므로 revert
-            revert("It is the wrong approach.");
         }
 
         NFT_Datas[_tokenId].isActive = false;
@@ -212,8 +210,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     }
 
     // 특정 tokenId 의 NFT Data 를 반환
-    function getNFTDatas(uint _tokenId, address msgsender) public view returns(NFT_Data memory){
-        require(msgsender == ownerOf(_tokenId),"You are not owner of NFT.");
+    function getNFTDatas(uint _tokenId) private view returns(NFT_Data memory){
         return NFT_Datas[_tokenId];
     }
         
@@ -266,29 +263,36 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         // 커버기간 30일인 경우 10~15% 구간이 제일 비쌈
         if(_coverTerm == 0){
             if(_coverRatio < 16) {
-                uint ratioWeight = 91 - _coverRatio;
-                uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
-                coverPrice = prePrice * 625 / 100000000;
+                unchecked{
+                    uint ratioWeight = 91 - _coverRatio;
+                    uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
+                    coverPrice = prePrice * 625 / 100000000;
+                }
+
             }
             else {
-                uint ratioWeight = 91 - _coverRatio; 
-                uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
-                coverPrice = prePrice * 312 / 10000000;
+                unchecked{
+                    uint ratioWeight = 91 - _coverRatio; 
+                    uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
+                    coverPrice = prePrice * 312 / 10000000;
+                }
             }
         // 커버기간 365일인 경우 10~20% 구간이 제일 비쌈
         } else if(_coverTerm == 1){
                 if(_coverRatio < 21) {
-                uint ratioWeight = 91 - _coverRatio; 
-                uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
-                coverPrice = prePrice * 625 / 10000000;
+                    unchecked{
+                        uint ratioWeight = 91 - _coverRatio; 
+                        uint prePrice = (priceFormula_30 * 10 - percentage) * ratioWeight * _amount / 100;
+                        coverPrice = prePrice * 625 / 10000000;
+                    }
             }
             else {
-                uint ratioWeight = 91 - _coverRatio; 
-                uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
-                coverPrice =  prePrice * 312 / 100000000;
+                unchecked{
+                    uint ratioWeight = 91 - _coverRatio; 
+                    uint prePrice = (priceFormula_365 * 10 - percentage) * ratioWeight * _amount / 100;
+                    coverPrice =  prePrice * 312 / 100000000;
+                }
             }
-        } else {
-            revert("It is wrong approach.");
         }
         return coverPrice;
     }
