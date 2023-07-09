@@ -212,8 +212,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     }
 
     // 특정 tokenId 의 NFT Data 를 반환
-    function getNFTDatas(uint _tokenId) public view returns(NFT_Data memory){
-        require(msg.sender == ownerOf(_tokenId),"You are not owner of NFT.");
+    function getNFTDatas(uint _tokenId, address msgsender) public view returns(NFT_Data memory){
+        require(msgsender == ownerOf(_tokenId),"You are not owner of NFT.");
         return NFT_Datas[_tokenId];
     }
         
@@ -327,6 +327,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return uriStorages;
     }
 
+
     /* 
     insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
     usdt > 0x617489EDf1b0E9546D34aA50f22194F582E17f81
@@ -337,8 +338,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     현재 배포, 프론트에서 사용중인 컨트랙트들 => 07.07.2023
     erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
-    gov - 0xC55a3701D0f6ec8064e46fc49013f0EaEE99554E
-    nft - 0x48780bcc6574134FaB9abd87101C7babD6D901fA
+    gov - 0x0cC1231b9b83675ccb62a994C3a2f2e81863509e
+    nft - 0xcd8c7Cb3a9d4394329694645bb72886B4773a45e
     getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
 
     아래는 리도 스테이킹의 read as proxy 32번
