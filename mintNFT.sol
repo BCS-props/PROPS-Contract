@@ -292,13 +292,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         }
         return coverPrice;
     }
-
-    // 특정 토큰에 대한 정보를 반환
-    function getCoverAmount(uint _tokenId) public view returns(NFT_Data memory) {
-        require(ownerOf(_tokenId) == msg.sender,"You are not owner of NFT.");
-        return NFT_Datas[_tokenId];
-    }
-
+    
     // 현재 wETH 가격 반환
     function getWETHBalances() public view returns(uint) {
         (uint token1, uint token2) = getWETHBalance.getPoolBalances();
@@ -327,6 +321,10 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return uriStorages;
     }
 
+    // 유저가 가진 tokenId 값 반환
+    function getTokenId(address msgsender) public view returns(uint){
+        
+    }
 
     /* 
     insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
