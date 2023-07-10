@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.8.18;
+pragma solidity 0.8.9-0.8.18;
 
 /*
     거버넌스 투표
@@ -91,7 +91,19 @@ contract governance {
         require(msg.sender == mintNFTContract); // 민팅 컨트랙트에서만 호출 가능
         totalVotePower += _number;
         votePower[_address] += _number;
-    } 
+    }
+
+    // 민팅 비용에 따른 투표권 지급을 계산하는 함수
+    function calculateVotePower(uint _amount) public pure returns(uint){
+        require(_amount > 0,"Cover Price is invaild.");
+        if(_amount < 100){
+            return 1;
+        } else if(_amount <= 200){
+            return 2;
+        } else {
+            return 3;
+        }
+    }
 
     // n번 안건에 투표 했는지 확인.
     function userVoteCheck(uint P_numbers, address _msgsender) public view returns(myStatus memory){
