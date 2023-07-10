@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.18;
+pragma solidity 0.8.9-0.8.18;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol"; 
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 import "./governance.sol";
 import "./getTokenByUniswap.sol";
+// import "contracts/0.8.9/WithdrawalQueue.sol";
 
 /*
     --------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     getBalance getWETHBalance;
     getBalance getUNIBalance;
     getBalance getLINKBalance;
+//    WithdrawalQueue withdrawalQueues;
 
     struct NFT_Data {
         uint8 coverTerm; // 0 : 30일, 1: 365일
@@ -93,7 +95,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // wETH 가격 하락에 대한 커버를 민팅하는 함수 ( 30일 : _coverRatio 10~15% 구간, 365일은 10~20% 구간이 제일 비쌈 )
     function mintNFTCover_wETH(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
-        require(_coverRatio >= 10 && _coverRatio <= 90,"Cover Ratio is available 10 to 90.");
+        require(_coverRatio >= 10 && _coverRatio <= 90);
         
         uint wETHFee = 100; // wETH 토큰의 가중치 1
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
@@ -110,7 +112,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
         NFT_Datas.push(NFT_Data(_coverTerm, 0, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
-        governances.increaseVotePower(calculateVotePower(coverPrice), msg.sender);
+        governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
@@ -118,7 +120,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // UNI 가격 하락에 대한 커버를 민팅하는 함수
     function mintNFTCover_UNI(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
-        require(_coverRatio >= 10 && _coverRatio <= 90,"Cover Ratio is available 10 to 90.");
+        require(_coverRatio >= 10 && _coverRatio <= 90);
 
         uint UNIFee = 110; // UNI 토큰의 가중치 10%
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
@@ -135,7 +137,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
         NFT_Datas.push(NFT_Data(_coverTerm, 1, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
-        governances.increaseVotePower(calculateVotePower(coverPrice), msg.sender);
+        governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
@@ -143,7 +145,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // LINK 가격 하락에 대한 커버를 민팅하는 함수
     function mintNFTCover_LINK(uint8 _coverTerm, uint8 _coverRatio, uint _amount, string memory _ipfsHash) public {
-        require(_coverRatio >= 10 && _coverRatio <= 90,"Cover Ratio is available 10 to 90.");
+        require(_coverRatio >= 10 && _coverRatio <= 90);
 
         uint LINKFee = 105; // LINK 토큰의 가중치 5%
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
@@ -160,7 +162,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
         NFT_Datas.push(NFT_Data(_coverTerm, 2, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
-        governances.increaseVotePower(calculateVotePower(coverPrice), msg.sender);
+        governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
@@ -168,39 +170,37 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // 토큰 하락 보험금을 claim 하는 함수 (wETH, UNI, LINK 등. 모든 토큰이 이 함수를 사용해서 claim)
     function claimCover(uint _tokenId) public {
-        require(_tokenId < tokenId,"Invaild tokenId");
-        require(msg.sender == ownerOf(_tokenId),"You are Not Owner of NFT."); // msg.sender 가 NFT 를 보유중인지 확인
+        require(_tokenId < tokenId);
+        require(msg.sender == ownerOf(_tokenId)); // msg.sender 가 NFT 를 보유중인지 확인
 
         // 30일 커버의 유효기간 확인
         if(NFT_Datas[_tokenId].coverTerm == 0){
             require(NFT_Datas[_tokenId].isActive == true &&
-            NFT_Datas[_tokenId].mintTime + 2592000 > block.timestamp,"Your Cover expired.");
+            NFT_Datas[_tokenId].mintTime + 2592000 > block.timestamp);
 
         } // 365일 커버의 유효기간 확인
         else if(NFT_Datas[_tokenId].coverTerm == 1){
             require(NFT_Datas[_tokenId].isActive == true && 
-            NFT_Datas[_tokenId].mintTime + 31536000 > block.timestamp,"Your Cover expired.");
+            NFT_Datas[_tokenId].mintTime + 31536000 > block.timestamp);
         }
 
         // wETH 의 claim 조건 확인 (현재 wETH 가격을 불러옴)
         if(NFT_Datas[_tokenId].tokenType == 0){
             (uint token1, uint token2) = getWETHBalance.getPoolBalances();
             uint currentTokenPrice = (token1 / token2) / 10; // claim 을 테스트하기 위해 /10
-            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
-            ,"Your claim request is not Accepted. Check current token price first.");
+            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice);
 
         } // UNI 의 claim 조건 확인 (현재 UNI 가격을 불러옴)
         else if(NFT_Datas[_tokenId].tokenType == 1){
             (uint token1, uint token2) = getUNIBalance.getPoolBalances();
             uint currentTokenPrice = (token1 / token2) / 10; // claim 을 테스트하기 위해 /10
-            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
-            ,"Your claim request is not Accepted. Check current token price first.");
+            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice);
+
         } // LINK 의 claim 조건 확인 (현재 LINK 가격을 불러옴)
-        else {
+        else if(NFT_Datas[_tokenId].tokenType == 2) {
             (uint token1, uint token2) = getLINKBalance.getPoolBalances();
             uint currentTokenPrice = (token1 / token2) / 10; // claim 을 테스트하기 위해 /10
-            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice
-            ,"Your claim request is not Accepted. Check current token price first.");
+            require( NFT_Datas[_tokenId].tokenPrice - (NFT_Datas[_tokenId].tokenPrice * NFT_Datas[_tokenId].coverRatio / 100) >= currentTokenPrice);
         }
 
         NFT_Datas[_tokenId].isActive = false;
@@ -210,7 +210,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // 커버 수수료 및 할인율 변경
     function setPriceFormula(uint8 _setFormula_30, uint16 _setFormula_365, uint8 _priceDiscount) public {
-        require(msg.sender == admin,"Your are not admin");
+        require(msg.sender == admin);
         priceFormula_30 = _setFormula_30;
         priceFormula_365 = _setFormula_365;
         priceDiscount = _priceDiscount;
@@ -218,7 +218,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // 거버넌스 address 변경
     function setGovernanceAddress(address _addr) public {
-        require(msg.sender == admin,"Admin only.");
+        require(msg.sender == admin);
         governances = governance(_addr);
     }
 
@@ -231,47 +231,15 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return TotalCoverAmount;
     }
 
-    // 총 커버 금액 (만료된 커버 제외)
-    function getTotalActiveCoverAmount() public view returns(uint){
-        uint TotalActiveCoverAmount;
-        for(uint i; i < NFT_Datas.length; i++){
-            if(NFT_Datas[i].isActive == true){
-                TotalActiveCoverAmount += NFT_Datas[i].coverAmount;
-            }
-        }
-        return TotalActiveCoverAmount;
-    }
-
     // 특정 tokenId 의 NFT Data 를 반환
-    function getNFTDatas(uint _tokenId) public view returns(NFT_Data memory){
+    function getNFTDatas(uint _tokenId, address msgsender) public view returns(NFT_Data memory){
+        require(msgsender == ownerOf(_tokenId));
         return NFT_Datas[_tokenId];
     }
         
     // 보험 구매에 사용한 금액 총액
     function getTotalSpend(address _msgsender) public view returns(uint){
         return totalSpend[_msgsender];
-    } 
-
-    // 30일 커버의 보험비 계산
-    function getCurrentFormula_30() public view returns(string memory){
-        return Strings.toString(priceFormula_30);
-    } 
-
-    // 365일 커버의 보험비 계산
-    function getCurrentFormula_365() public view returns(string memory){
-        return Strings.toString(priceFormula_365);
-    } 
-
-    // 민팅 비용에 따른 투표권 지급을 계산하는 함수
-    function calculateVotePower(uint _amount) public pure returns(uint){
-        require(_amount > 0,"Cover Price is invaild.");
-        if(_amount < 100){
-            return 1;
-        } else if(_amount <= 200){
-            return 2;
-        } else {
-            return 3;
-        }
     }
     
     // 보험료를 %로 나타내는 함수.
@@ -344,6 +312,13 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return currentTokenPrice;
     }
 
+    // 현재 LINK 가격 반환
+    function getLINKBalances() public view returns(uint) {
+        (uint token1, uint token2) = getLINKBalance.getPoolBalances();
+        uint currentTokenPrice = token1 / token2;
+        return currentTokenPrice;
+    }
+
     // tokenURI 값 반환
     function getTokenURI(address msgsender) public view returns(string[] memory){
         string[] memory uriStorages = new string[](balanceOf(msgsender));
@@ -378,10 +353,10 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     uniswap pool DAI / wETH > 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
     uniswap pool DAI / UNI > 0x418b2be7F5ABE9a7104f503F8FCf25192A5e091f
 
-    현재 배포, 프론트에서 사용중인 컨트랙트들 => 07.07.2023
+    현재 배포, 프론트에서 사용중인 컨트랙트들 => 10.07.2023
     erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
-    gov - 0x0cC1231b9b83675ccb62a994C3a2f2e81863509e
-    nft - 0xcd8c7Cb3a9d4394329694645bb72886B4773a45e
+    gov - 0x3c35155297EB63797Cd9c3952547b27f882603aE
+    nft - 0x1CF47A6F2c3A66c27B095894d61f6249B1c845C0
     getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
 
     아래는 리도 스테이킹의 read as proxy 32번
