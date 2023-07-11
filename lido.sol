@@ -15,7 +15,7 @@ contract lido is WithdrawalQueueBase {
         return withdrawalQueues.getWithdrawalRequests(msgsender);
     }
 
-    function checkStatus(uint[] memory _id) public view returns(uint){
+    function checkStatus(uint[] memory _id) public view returns(uint, uint){
         require(_id.length == 1);
 
         uint withdrawalAmount;
@@ -28,8 +28,21 @@ contract lido is WithdrawalQueueBase {
         (isFinalizeds,owners,timestamp,withdrawalAmount) = 
         (status[0].isFinalized,status[0].owner,status[0].timestamp,status[0].amountOfStETH);
 
-        if(withdrawalAmount >= 10 ** 15 && timestamp + 432000 > block.timestamp && owners == msg.sender && isFinalizeds == false){
-            return withdrawalAmount;
+        if(withdrawalAmount >= 10 ** 17 && timestamp + 432000 > block.timestamp && owners == tx.origin && isFinalizeds == false){
+            return (withdrawalAmount,timestamp);
         } else revert("false");
+    }
+
+    function getAmountTimestamp(uint[] memory _id) public view returns(uint, uint){
+        require(_id.length == 1);
+
+        uint withdrawalAmount;
+        uint timestamp;
+        WithdrawalRequestStatus[] memory status;
+
+        status = withdrawalQueues.getWithdrawalStatus(_id);
+        (timestamp,withdrawalAmount) = (status[0].timestamp,status[0].amountOfStETH);
+        
+        return (timestamp,withdrawalAmount);
     }
 }
