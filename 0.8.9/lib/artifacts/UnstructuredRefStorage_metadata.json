@@ -1,0 +1,45 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/0.8.9/lib/UnstructuredRefStorage.sol": "UnstructuredRefStorage"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/0.8.9/lib/UnstructuredRefStorage.sol": {
+			"keccak256": "0x2a78e7a01026b783118a0c33cd7ccfa2288d58931db26c6de054144fadb72309",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://102730ec6ea08219ab899c16941e210e39c9f67efb696382f217fd0d437696ec",
+				"dweb:/ipfs/QmcTtraiRs5BZWFvoWg7hTr9vXr28EoiK6q585tdKMun2d"
+			]
+		}
+	},
+	"version": 1
+}

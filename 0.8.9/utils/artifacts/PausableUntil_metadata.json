@@ -1,0 +1,150 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "PauseUntilMustBeInFuture",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "PausedExpected",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ResumedExpected",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroPauseDuration",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"name": "Paused",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "Resumed",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "PAUSE_INFINITELY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getResumeSinceTimestamp",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"events": {
+				"Paused(uint256)": {
+					"notice": "Emitted when paused by the `pauseFor` or `pauseUntil` call"
+				},
+				"Resumed()": {
+					"notice": "Emitted when resumed by the `resume` call"
+				}
+			},
+			"kind": "user",
+			"methods": {
+				"PAUSE_INFINITELY()": {
+					"notice": "Special value for the infinite pause"
+				},
+				"getResumeSinceTimestamp()": {
+					"notice": "Returns one of:  - PAUSE_INFINITELY if paused infinitely returns  - first second when get contract get resumed if paused for specific duration  - some timestamp in past if not paused"
+				},
+				"isPaused()": {
+					"notice": "Returns whether the contract is paused"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/0.8.9/utils/PausableUntil.sol": "PausableUntil"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/0.8.9/lib/UnstructuredStorage.sol": {
+			"keccak256": "0xe4bb1b1a3ecf62b15c386b8eec8418af1f1a0adc7038cc429e49d714c680bf3a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0d7b1747879ffa8eac5041fad304f367998dce57f2ed6185c1baeb81c9df2195",
+				"dweb:/ipfs/Qmckmnk7WgkKwMa4r6MXo2HnNfbNzUg4uvBJxyzrzjatZo"
+			]
+		},
+		"contracts/0.8.9/utils/PausableUntil.sol": {
+			"keccak256": "0x649e985766974846621b6b5e940f3c104313f5cdc67cf3028f6dfc11c95be154",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://be1f588adb2f8fbbd0ad881113571eb6014662c87aea39275a547d7d6efb7b19",
+				"dweb:/ipfs/QmVdAvGqrsBzseJ61oVNJJKB84BYNu1dLWYnd3LvFYC3t8"
+			]
+		}
+	},
+	"version": 1
+}

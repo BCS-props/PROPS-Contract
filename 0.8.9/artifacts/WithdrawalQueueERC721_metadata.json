@@ -1,0 +1,2588 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_wstETH",
+						"type": "address"
+					},
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_symbol",
+						"type": "string"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "AdminZeroAddress",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ApprovalToOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ApproveToCaller",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_firstArrayLength",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_secondArrayLength",
+						"type": "uint256"
+					}
+				],
+				"name": "ArraysLengthMismatch",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "BatchesAreNotSorted",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "CantSendValueRecipientMayHaveReverted",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "EmptyBatches",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidContractVersionIncrement",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_hint",
+						"type": "uint256"
+					}
+				],
+				"name": "InvalidHint",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "InvalidOwnerAddress",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidReportTimestamp",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "InvalidRequestId",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "startId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "endId",
+						"type": "uint256"
+					}
+				],
+				"name": "InvalidRequestIdRange",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidState",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NonZeroContractVersionOnInit",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NotEnoughEther",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_sender",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "NotOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "NotOwnerOrApproved",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "NotOwnerOrApprovedForAll",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "PauseUntilMustBeInFuture",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "PausedExpected",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "RequestAlreadyClaimed",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_amountOfStETH",
+						"type": "uint256"
+					}
+				],
+				"name": "RequestAmountTooLarge",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_amountOfStETH",
+						"type": "uint256"
+					}
+				],
+				"name": "RequestAmountTooSmall",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "RequestIdsNotSorted",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "RequestNotFoundOrNotFinalized",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ResumedExpected",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "str",
+						"type": "string"
+					}
+				],
+				"name": "StringTooLong",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "sent",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxExpected",
+						"type": "uint256"
+					}
+				],
+				"name": "TooMuchEtherToFinalize",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "realOwner",
+						"type": "address"
+					}
+				],
+				"name": "TransferFromIncorrectOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "TransferFromZeroAddress",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "TransferToNonIERC721Receiver",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "TransferToThemselves",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "TransferToZeroAddress",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "expected",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "received",
+						"type": "uint256"
+					}
+				],
+				"name": "UnexpectedContractVersion",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroAmountOfETH",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroMetadata",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroPauseDuration",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroRecipient",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroShareRate",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "ZeroTimestamp",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "approved",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "Approval",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "operator",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "approved",
+						"type": "bool"
+					}
+				],
+				"name": "ApprovalForAll",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "baseURI",
+						"type": "string"
+					}
+				],
+				"name": "BaseURISet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_fromTokenId",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_toTokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "BatchMetadataUpdate",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "BunkerModeDisabled",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_sinceTimestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "BunkerModeEnabled",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "version",
+						"type": "uint256"
+					}
+				],
+				"name": "ContractVersionSet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_admin",
+						"type": "address"
+					}
+				],
+				"name": "InitializedV1",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "MetadataUpdate",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "nftDescriptorAddress",
+						"type": "address"
+					}
+				],
+				"name": "NftDescriptorAddressSet",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"name": "Paused",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "Resumed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "previousAdminRole",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "newAdminRole",
+						"type": "bytes32"
+					}
+				],
+				"name": "RoleAdminChanged",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "RoleGranted",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					}
+				],
+				"name": "RoleRevoked",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "from",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "Transfer",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "requestId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "receiver",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountOfETH",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawalClaimed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "requestId",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "requestor",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountOfStETH",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountOfShares",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawalRequested",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "from",
+						"type": "uint256"
+					},
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "to",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountOfETHLocked",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "sharesToBurn",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "WithdrawalsFinalized",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "BUNKER_MODE_DISABLED_TIMESTAMP",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "DEFAULT_ADMIN_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "FINALIZE_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MANAGE_TOKEN_URI_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MAX_BATCHES_LENGTH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MAX_STETH_WITHDRAWAL_AMOUNT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MIN_STETH_WITHDRAWAL_AMOUNT",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "ORACLE_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "PAUSE_INFINITELY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "PAUSE_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "RESUME_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "STETH",
+				"outputs": [
+					{
+						"internalType": "contract IStETH",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "WSTETH",
+				"outputs": [
+					{
+						"internalType": "contract IWstETH",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "approve",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "balanceOf",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "bunkerModeSinceTimestamp",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_maxShareRate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxTimestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxRequestsPerCall",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "remainingEthBudget",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "finished",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256[36]",
+								"name": "batches",
+								"type": "uint256[36]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "batchesLength",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct WithdrawalQueueBase.BatchesCalculationState",
+						"name": "_state",
+						"type": "tuple"
+					}
+				],
+				"name": "calculateFinalizationBatches",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "remainingEthBudget",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "finished",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint256[36]",
+								"name": "batches",
+								"type": "uint256[36]"
+							},
+							{
+								"internalType": "uint256",
+								"name": "batchesLength",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct WithdrawalQueueBase.BatchesCalculationState",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "claimWithdrawal",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_requestIds",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_hints",
+						"type": "uint256[]"
+					}
+				],
+				"name": "claimWithdrawals",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_requestIds",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_hints",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "_recipient",
+						"type": "address"
+					}
+				],
+				"name": "claimWithdrawalsTo",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_lastRequestIdToBeFinalized",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxShareRate",
+						"type": "uint256"
+					}
+				],
+				"name": "finalize",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_requestIds",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_firstIndex",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_lastIndex",
+						"type": "uint256"
+					}
+				],
+				"name": "findCheckpointHints",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "hintIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "getApproved",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getBaseURI",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_requestIds",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_hints",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getClaimableEther",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "claimableEthValues",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getContractVersion",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLastCheckpointIndex",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLastFinalizedRequestId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLastRequestId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLockedEtherAmount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getNFTDescriptorAddress",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getResumeSinceTimestamp",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					}
+				],
+				"name": "getRoleAdmin",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "index",
+						"type": "uint256"
+					}
+				],
+				"name": "getRoleMember",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					}
+				],
+				"name": "getRoleMemberCount",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "getWithdrawalRequests",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "requestsIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_requestIds",
+						"type": "uint256[]"
+					}
+				],
+				"name": "getWithdrawalStatus",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "amountOfStETH",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "amountOfShares",
+								"type": "uint256"
+							},
+							{
+								"internalType": "address",
+								"name": "owner",
+								"type": "address"
+							},
+							{
+								"internalType": "uint256",
+								"name": "timestamp",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bool",
+								"name": "isFinalized",
+								"type": "bool"
+							},
+							{
+								"internalType": "bool",
+								"name": "isClaimed",
+								"type": "bool"
+							}
+						],
+						"internalType": "struct WithdrawalQueueBase.WithdrawalRequestStatus[]",
+						"name": "statuses",
+						"type": "tuple[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "grantRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "hasRole",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_admin",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_operator",
+						"type": "address"
+					}
+				],
+				"name": "isApprovedForAll",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isBunkerModeActive",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isPaused",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "name",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bool",
+						"name": "_isBunkerModeNow",
+						"type": "bool"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_bunkerStartTimestamp",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_currentReportTimestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "onOracleReport",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "ownerOf",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_duration",
+						"type": "uint256"
+					}
+				],
+				"name": "pauseFor",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_pauseUntilInclusive",
+						"type": "uint256"
+					}
+				],
+				"name": "pauseUntil",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_batches",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxShareRate",
+						"type": "uint256"
+					}
+				],
+				"name": "prefinalize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "ethToLock",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "sharesToBurn",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "renounceRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "requestWithdrawals",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "requestIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "value",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "deadline",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct WithdrawalQueue.PermitInput",
+						"name": "_permit",
+						"type": "tuple"
+					}
+				],
+				"name": "requestWithdrawalsWithPermit",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "requestIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "requestWithdrawalsWstETH",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "requestIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					},
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "value",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "deadline",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint8",
+								"name": "v",
+								"type": "uint8"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "r",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "s",
+								"type": "bytes32"
+							}
+						],
+						"internalType": "struct WithdrawalQueue.PermitInput",
+						"name": "_permit",
+						"type": "tuple"
+					}
+				],
+				"name": "requestWithdrawalsWstETHWithPermit",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "requestIds",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "resume",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "role",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "revokeRole",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "safeTransferFrom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_data",
+						"type": "bytes"
+					}
+				],
+				"name": "safeTransferFrom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_operator",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "_approved",
+						"type": "bool"
+					}
+				],
+				"name": "setApprovalForAll",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_baseURI",
+						"type": "string"
+					}
+				],
+				"name": "setBaseURI",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_nftDescriptorAddress",
+						"type": "address"
+					}
+				],
+				"name": "setNFTDescriptorAddress",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes4",
+						"name": "interfaceId",
+						"type": "bytes4"
+					}
+				],
+				"name": "supportsInterface",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "symbol",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "tokenURI",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_from",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					}
+				],
+				"name": "transferFrom",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "unfinalizedRequestNumber",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "unfinalizedStETH",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "psirex, folkyatina",
+			"kind": "dev",
+			"methods": {
+				"approve(address,uint256)": {
+					"details": "See {IERC721-approve}."
+				},
+				"balanceOf(address)": {
+					"details": "See {IERC721-balanceOf}."
+				},
+				"bunkerModeSinceTimestamp()": {
+					"details": "returns `BUNKER_MODE_DISABLED_TIMESTAMP` if bunker mode is disable (i.e., protocol in turbo mode)"
+				},
+				"calculateFinalizationBatches(uint256,uint256,uint256,(uint256,bool,uint256[36],uint256))": {
+					"params": {
+						"_maxRequestsPerCall": "max request number that can be processed per call.",
+						"_maxShareRate": "current share rate of the protocol (1e27 precision)",
+						"_maxTimestamp": "max timestamp of the request that can be finalized",
+						"_state": "structure that accumulates the state across multiple invocations to overcome gas limits.  To start calculation you should pass `state.remainingEthBudget` and `state.finished == false` and then invoke  the function with returned `state` until it returns a state with `finished` flag set"
+					},
+					"returns": {
+						"_0": "state that is changing on each call and should be passed to the next call until `state.finished` is true"
+					}
+				},
+				"claimWithdrawal(uint256)": {
+					"details": "use unbounded loop to find a hint, which can lead to OOGReverts if requestId or hint are not valid  Reverts if request is not finalized or already claimed  Reverts if msg sender is not an owner of request",
+					"params": {
+						"_requestId": "request id to claim"
+					}
+				},
+				"claimWithdrawals(uint256[],uint256[])": {
+					"details": "Reverts if requestIds and hints arrays length differs  Reverts if any requestId or hint in arguments are not valid  Reverts if any request is not finalized or already claimed  Reverts if msg sender is not an owner of the requests",
+					"params": {
+						"_hints": "checkpoint hint for each id. Can be obtained with `findCheckpointHints()`",
+						"_requestIds": "array of request ids to claim"
+					}
+				},
+				"claimWithdrawalsTo(uint256[],uint256[],address)": {
+					"details": "Reverts if recipient is equal to zero  Reverts if requestIds and hints arrays length differs  Reverts if any requestId or hint in arguments are not valid  Reverts if any request is not finalized or already claimed  Reverts if msg sender is not an owner of the requests",
+					"params": {
+						"_hints": "checkpoint hint for each id. Can be obtained with `findCheckpointHints()`",
+						"_recipient": "address where claimed ether will be sent to",
+						"_requestIds": "array of request ids to claim"
+					}
+				},
+				"constructor": {
+					"params": {
+						"_name": "IERC721Metadata name string. Should be shorter than 32 bytes",
+						"_symbol": "IERC721Metadata symbol string. Should be shorter than 32 bytes",
+						"_wstETH": "address of WstETH contract"
+					}
+				},
+				"finalize(uint256,uint256)": {
+					"details": "ether to finalize all the requests should be calculated using `prefinalize()` and sent along"
+				},
+				"findCheckpointHints(uint256[],uint256,uint256)": {
+					"params": {
+						"_firstIndex": "left boundary of the search range. Should be greater than 0",
+						"_lastIndex": "right boundary of the search range. Should be less than or equal to getLastCheckpointIndex()",
+						"_requestIds": "ids of the requests sorted in the ascending order to get hints for"
+					},
+					"returns": {
+						"hintIds": "array of hints used to find required checkpoint for the request"
+					}
+				},
+				"getApproved(uint256)": {
+					"details": "See {IERC721-getApproved}."
+				},
+				"getClaimableEther(uint256[],uint256[])": {
+					"params": {
+						"_hints": "checkpoint hints. can be found with `findCheckpointHints(_requestIds, 1, getLastCheckpointIndex())`",
+						"_requestIds": "array of request ids"
+					},
+					"returns": {
+						"claimableEthValues": "amount of claimable ether for each request, amount is equal to 0 if request  is not finalized or already claimed"
+					}
+				},
+				"getRoleAdmin(bytes32)": {
+					"details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+				},
+				"getRoleMember(bytes32,uint256)": {
+					"details": "Returns one of the accounts that have `role`. `index` must be a value between 0 and {getRoleMemberCount}, non-inclusive. Role bearers are not sorted in any particular way, and their ordering may change at any point. WARNING: When using {getRoleMember} and {getRoleMemberCount}, make sure you perform all queries on the same block. See the following https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post] for more information."
+				},
+				"getRoleMemberCount(bytes32)": {
+					"details": "Returns the number of accounts that have `role`. Can be used together with {getRoleMember} to enumerate all bearers of a role."
+				},
+				"getWithdrawalStatus(uint256[])": {
+					"params": {
+						"_requestIds": "array of withdrawal request ids"
+					}
+				},
+				"grantRole(bytes32,address)": {
+					"details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role."
+				},
+				"hasRole(bytes32,address)": {
+					"details": "Returns `true` if `account` has been granted `role`."
+				},
+				"initialize(address)": {
+					"details": "Reverts if `_admin` equals to `address(0)`NB! It's initialized in paused state by default and should be resumed explicitly to startNB! Bunker mode is disabled by default",
+					"params": {
+						"_admin": "admin address that can change every role."
+					}
+				},
+				"isApprovedForAll(address,address)": {
+					"details": "See {IERC721-isApprovedForAll}."
+				},
+				"name()": {
+					"details": "See {IERC721Metadata-name}."
+				},
+				"onOracleReport(bool,uint256,uint256)": {
+					"details": "should be called by oracle",
+					"params": {
+						"_bunkerStartTimestamp": "timestamp of start of the bunker mode",
+						"_currentReportTimestamp": "timestamp of the current report ref slot",
+						"_isBunkerModeNow": "is bunker mode reported by oracle"
+					}
+				},
+				"ownerOf(uint256)": {
+					"details": "See {IERC721-ownerOf}."
+				},
+				"pauseFor(uint256)": {
+					"details": "Reverts if contract is already pausedReverts reason if sender has no `PAUSE_ROLE`Reverts if zero duration is passed",
+					"params": {
+						"_duration": "pause duration in seconds (use `PAUSE_INFINITELY` for unlimited)"
+					}
+				},
+				"pauseUntil(uint256)": {
+					"details": "Reverts if the timestamp is in the pastReverts if sender has no `PAUSE_ROLE`Reverts if contract is already paused",
+					"params": {
+						"_pauseUntilInclusive": "the last second to pause until inclusive"
+					}
+				},
+				"prefinalize(uint256[],uint256)": {
+					"params": {
+						"_batches": "finalization batches calculated offchain using `calculateFinalizationBatches()`",
+						"_maxShareRate": "max share rate that will be used for request finalization (1e27 precision)"
+					},
+					"returns": {
+						"ethToLock": "amount of ether that should be sent with `finalize()` method",
+						"sharesToBurn": "amount of shares that belongs to requests that will be finalized"
+					}
+				},
+				"renounceRole(bytes32,address)": {
+					"details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been revoked `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`."
+				},
+				"requestWithdrawals(uint256[],address)": {
+					"params": {
+						"_amounts": "an array of stETH amount values.  The standalone withdrawal request will be created for each item in the passed list.",
+						"_owner": "address that will be able to manage the created requests.  If `address(0)` is passed, `msg.sender` will be used as owner."
+					},
+					"returns": {
+						"requestIds": "an array of the created withdrawal request ids"
+					}
+				},
+				"requestWithdrawalsWithPermit(uint256[],address,(uint256,uint256,uint8,bytes32,bytes32))": {
+					"params": {
+						"_amounts": "an array of stETH amount values  The standalone withdrawal request will be created for each item in the passed list.",
+						"_owner": "address that will be able to manage the created requests.  If `address(0)` is passed, `msg.sender` will be used as an owner.",
+						"_permit": "data required for the stETH.permit() method to set the allowance"
+					},
+					"returns": {
+						"requestIds": "an array of the created withdrawal request ids"
+					}
+				},
+				"requestWithdrawalsWstETH(uint256[],address)": {
+					"params": {
+						"_amounts": "an array of wstETH amount values.  The standalone withdrawal request will be created for each item in the passed list.",
+						"_owner": "address that will be able to manage the created requests.  If `address(0)` is passed, `msg.sender` will be used as an owner."
+					},
+					"returns": {
+						"requestIds": "an array of the created withdrawal request ids"
+					}
+				},
+				"requestWithdrawalsWstETHWithPermit(uint256[],address,(uint256,uint256,uint8,bytes32,bytes32))": {
+					"params": {
+						"_amounts": "an array of wstETH amount values  The standalone withdrawal request will be created for each item in the passed list.",
+						"_owner": "address that will be able to manage the created requests.  If `address(0)` is passed, `msg.sender` will be used as an owner.",
+						"_permit": "data required for the wtETH.permit() method to set the allowance"
+					},
+					"returns": {
+						"requestIds": "an array of the created withdrawal request ids"
+					}
+				},
+				"revokeRole(bytes32,address)": {
+					"details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role."
+				},
+				"safeTransferFrom(address,address,uint256)": {
+					"details": "See {IERC721-safeTransferFrom}."
+				},
+				"safeTransferFrom(address,address,uint256,bytes)": {
+					"details": "See {IERC721-safeTransferFrom}."
+				},
+				"setApprovalForAll(address,bool)": {
+					"details": "See {IERC721-setApprovalForAll}."
+				},
+				"setBaseURI(string)": {
+					"details": "If NFTDescriptor address isn't set the `baseURI` would be used for generating erc721 tokenURI. In case  NFTDescriptor address is set it would be used as a first-priority method."
+				},
+				"setNFTDescriptorAddress(address)": {
+					"details": "If NFTDescriptor address isn't set the `baseURI` would be used for generating erc721 tokenURI. In case  NFTDescriptor address is set it would be used as a first-priority method."
+				},
+				"supportsInterface(bytes4)": {
+					"details": "See {IERC165-supportsInterface}."
+				},
+				"symbol()": {
+					"details": "See {IERC721Metadata-symbol}."
+				},
+				"tokenURI(uint256)": {
+					"details": "See {IERC721Metadata-tokenURI}.If NFTDescriptor address isn't set the `baseURI` would be used for generating erc721 tokenURI. In case  NFTDescriptor address is set it would be used as a first-priority method."
+				},
+				"transferFrom(address,address,uint256)": {
+					"details": "See {IERC721-transferFrom}."
+				}
+			},
+			"title": "NFT implementation on top of {WithdrawalQueue} NFT is minted on every request and burned on claim",
+			"version": 1
+		},
+		"userdoc": {
+			"events": {
+				"Paused(uint256)": {
+					"notice": "Emitted when paused by the `pauseFor` or `pauseUntil` call"
+				},
+				"Resumed()": {
+					"notice": "Emitted when resumed by the `resume` call"
+				}
+			},
+			"kind": "user",
+			"methods": {
+				"BUNKER_MODE_DISABLED_TIMESTAMP()": {
+					"notice": "Special value for timestamp when bunker mode is inactive (i.e., protocol in turbo mode)"
+				},
+				"MAX_STETH_WITHDRAWAL_AMOUNT()": {
+					"notice": "maximum amount of stETH that is possible to withdraw by a single request Prevents accumulating too much funds per single request fulfillment in the future."
+				},
+				"MIN_STETH_WITHDRAWAL_AMOUNT()": {
+					"notice": "minimal amount of stETH that is possible to withdraw"
+				},
+				"PAUSE_INFINITELY()": {
+					"notice": "Special value for the infinite pause"
+				},
+				"STETH()": {
+					"notice": "Lido stETH token address"
+				},
+				"WSTETH()": {
+					"notice": "Lido wstETH token address"
+				},
+				"bunkerModeSinceTimestamp()": {
+					"notice": "Get bunker mode activation timestamp"
+				},
+				"calculateFinalizationBatches(uint256,uint256,uint256,(uint256,bool,uint256[36],uint256))": {
+					"notice": "Offchain view for the oracle daemon that calculates how many requests can be finalized within the given budget, time period and share rate limits. Returned requests are split into batches. Each batch consist of the requests that all have the share rate below the `_maxShareRate` or above it. Below you can see an example how 14 requests with different share rates will be split into 5 batches by this method ^ share rate | |         • • |       •    •   • • • |----------------------•------ _maxShareRate |   •          •        • • • | • +-------------------------------> requestId  | 1st|  2nd  |3| 4th | 5th  |"
+				},
+				"claimWithdrawal(uint256)": {
+					"notice": "Claim one`_requestId` request once finalized sending locked ether to the owner"
+				},
+				"claimWithdrawals(uint256[],uint256[])": {
+					"notice": "Claim a batch of withdrawal requests if they are finalized sending locked ether to the owner"
+				},
+				"claimWithdrawalsTo(uint256[],uint256[],address)": {
+					"notice": "Claim a batch of withdrawal requests if they are finalized sending ether to `_recipient`"
+				},
+				"finalize(uint256,uint256)": {
+					"notice": "Finalize requests from last finalized one up to `_lastRequestIdToBeFinalized`"
+				},
+				"findCheckpointHints(uint256[],uint256,uint256)": {
+					"notice": "Finds the list of hints for the given `_requestIds` searching among the checkpoints with indices  in the range  `[_firstIndex, _lastIndex]`.  NB! Array of request ids should be sorted  NB! `_firstIndex` should be greater than 0, because checkpoint list is 1-based array  Usage: findCheckpointHints(_requestIds, 1, getLastCheckpointIndex())"
+				},
+				"getBaseURI()": {
+					"notice": "Base URI for computing {tokenURI}. If set, the resulting URI for each token will be the concatenation of the `baseURI` and the `_requestId`."
+				},
+				"getClaimableEther(uint256[],uint256[])": {
+					"notice": "Returns amount of ether available for claim for each provided request id"
+				},
+				"getContractVersion()": {
+					"notice": "Returns the current contract version."
+				},
+				"getLastCheckpointIndex()": {
+					"notice": "length of the checkpoint array. Last possible value for the hint.  NB! checkpoints are indexed from 1, so it returns 0 if there is no checkpoints"
+				},
+				"getLastFinalizedRequestId()": {
+					"notice": "id of the last finalized request  NB! requests are indexed from 1, so it returns 0 if there is no finalized requests in the queue"
+				},
+				"getLastRequestId()": {
+					"notice": "id of the last request  NB! requests are indexed from 1, so it returns 0 if there is no requests in the queue"
+				},
+				"getLockedEtherAmount()": {
+					"notice": "amount of ETH on this contract balance that is locked for withdrawal and available to claim"
+				},
+				"getNFTDescriptorAddress()": {
+					"notice": "Address of NFTDescriptor contract that is responsible for tokenURI generation."
+				},
+				"getResumeSinceTimestamp()": {
+					"notice": "Returns one of:  - PAUSE_INFINITELY if paused infinitely returns  - first second when get contract get resumed if paused for specific duration  - some timestamp in past if not paused"
+				},
+				"getWithdrawalRequests(address)": {
+					"notice": "Returns all withdrawal requests that belongs to the `_owner` address WARNING: This operation will copy the entire storage to memory, which can be quite expensive. This is designed to mostly be used by view accessors that are queried without any gas fees. Developers should keep in mind that this function has an unbounded cost, and using it as part of a state-changing function may render the function uncallable if the set grows to a point where copying to memory consumes too much gas to fit in a block."
+				},
+				"getWithdrawalStatus(uint256[])": {
+					"notice": "Returns status for requests with provided ids"
+				},
+				"initialize(address)": {
+					"notice": "Initialize the contract storage explicitly."
+				},
+				"isBunkerModeActive()": {
+					"notice": "Check if bunker mode is active"
+				},
+				"isPaused()": {
+					"notice": "Returns whether the contract is paused"
+				},
+				"onOracleReport(bool,uint256,uint256)": {
+					"notice": "Update bunker mode state and last report timestamp on oracle report"
+				},
+				"pauseFor(uint256)": {
+					"notice": "Pause withdrawal requests placement and finalization. Claiming finalized requests will still be available"
+				},
+				"pauseUntil(uint256)": {
+					"notice": "Pause withdrawal requests placement and finalization. Claiming finalized requests will still be available"
+				},
+				"prefinalize(uint256[],uint256)": {
+					"notice": "Checks finalization batches, calculates required ether and the amount of shares to burn"
+				},
+				"requestWithdrawals(uint256[],address)": {
+					"notice": "Request the batch of stETH for withdrawal. Approvals for the passed amounts should be done before."
+				},
+				"requestWithdrawalsWithPermit(uint256[],address,(uint256,uint256,uint8,bytes32,bytes32))": {
+					"notice": "Request the batch of stETH for withdrawal using EIP-2612 Permit"
+				},
+				"requestWithdrawalsWstETH(uint256[],address)": {
+					"notice": "Request the batch of wstETH for withdrawal. Approvals for the passed amounts should be done before."
+				},
+				"requestWithdrawalsWstETHWithPermit(uint256[],address,(uint256,uint256,uint8,bytes32,bytes32))": {
+					"notice": "Request the batch of wstETH for withdrawal using EIP-2612 Permit"
+				},
+				"resume()": {
+					"notice": "Resume withdrawal requests placement and finalization  Contract is deployed in paused state and should be resumed explicitly"
+				},
+				"setBaseURI(string)": {
+					"notice": "Sets the Base URI for computing {tokenURI}. It does not expect the ending slash in provided string."
+				},
+				"setNFTDescriptorAddress(address)": {
+					"notice": "Sets the address of NFTDescriptor contract that is responsible for tokenURI generation."
+				},
+				"unfinalizedRequestNumber()": {
+					"notice": "return the number of unfinalized requests in the queue"
+				},
+				"unfinalizedStETH()": {
+					"notice": "Returns the amount of stETH in the queue yet to be finalized"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/0.8.9/WithdrawalQueueERC721.sol": "WithdrawalQueueERC721"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts@v4.4/access/IAccessControl.sol": {
+			"keccak256": "0x59ce320a585d7e1f163cd70390a0ef2ff9cec832e2aa544293a00692465a7a57",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bb2c137c343ef0c4c7ce7b18c1d108afdc9d315a04e48307288d2d05adcbde3a",
+				"dweb:/ipfs/QmUxhrAQM3MM3FF5j7AtcXLXguWCJBHJ14BRdVtuoQc8Fh"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/access/IAccessControlEnumerable.sol": {
+			"keccak256": "0xba4459ab871dfa300f5212c6c30178b63898c03533a1ede28436f11546626676",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3dcc7b09bfa6e18aab262ca372f4a9b1fc82e294b430706a4e1378cf58e6a276",
+				"dweb:/ipfs/QmT8oSAcesdctR15HMLhr2a1HRpXymxdjTfdtfTYJcj2N2"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/token/ERC20/IERC20.sol": {
+			"keccak256": "0x61437cb513a887a1bbad006e7b1c8b414478427d33de47c5600af3c748f108da",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2c3d0973630ed74f2b5ce3944677a885dc70ec32fc83b35f55045a10224da32b",
+				"dweb:/ipfs/QmbefZ5RoEZKNHXCALfh683PnaNYzKPcKMFjyY1DVAgq8A"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/token/ERC20/extensions/draft-IERC20Permit.sol": {
+			"keccak256": "0xf41ca991f30855bf80ffd11e9347856a517b977f0a6c2d52e6421a99b7840329",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b2717fd2bdac99daa960a6de500754ea1b932093c946388c381da48658234b95",
+				"dweb:/ipfs/QmP6QVMn6UeA3ByahyJbYQr5M6coHKBKsf3ySZSfbyA8R7"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/token/ERC721/IERC721.sol": {
+			"keccak256": "0x516a22876c1fab47f49b1bc22b4614491cd05338af8bd2e7b382da090a079990",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a439187f7126d31add4557f82d8aed6be0162007cd7182c48fd934dbab8f3849",
+				"dweb:/ipfs/QmRPLguRFvrRJS7r6F1bcLvsx6q1VrgjEpZafyeL8D7xZh"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/token/ERC721/IERC721Receiver.sol": {
+			"keccak256": "0xd5fa74b4fb323776fa4a8158800fec9d5ac0fec0d6dd046dd93798632ada265f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://33017a30a99cc5411a9e376622c31fc4a55cfc6a335e2f57f00cbf24a817ff3f",
+				"dweb:/ipfs/QmWNQtWTPhA7Lo8nbxbc8KFMvZwbFYB8fSeEQ3vuapSV4a"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/token/ERC721/extensions/IERC721Metadata.sol": {
+			"keccak256": "0x75b829ff2f26c14355d1cba20e16fe7b29ca58eb5fef665ede48bc0f9c6c74b9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://a0a107160525724f9e1bbbab031defc2f298296dd9e331f16a6f7130cec32146",
+				"dweb:/ipfs/QmemujxSd7gX8A9M8UwmNbz4Ms3U9FG9QfudUgxwvTmPWf"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/Address.sol": {
+			"keccak256": "0x51b758a8815ecc9596c66c37d56b1d33883a444631a3f916b9fe65cb863ef7c4",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://997ca03557985b3c6f9143a18b6c3a710b3bc1c7f189ee956d305a966ecfb922",
+				"dweb:/ipfs/QmQaD3Wb62F88SHqmpLttvF6wKuPDQep2LLUcKPekeRzvz"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/Context.sol": {
+			"keccak256": "0xe2e337e6dde9ef6b680e07338c493ebea1b5fd09b43424112868e9cc1706bca7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6df0ddf21ce9f58271bdfaa85cde98b200ef242a05a3f85c2bc10a8294800a92",
+				"dweb:/ipfs/QmRK2Y5Yc6BK7tGKkgsgn3aJEQGi5aakeSPZvS65PV8Xp3"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/Strings.sol": {
+			"keccak256": "0x32c202bd28995dd20c4347b7c6467a6d3241c74c8ad3edcbb610cd9205916c45",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8179c356adb19e70d6b31a1eedc8c5c7f0c00e669e2540f4099e3844c6074d30",
+				"dweb:/ipfs/QmWFbivarEobbqhS1go64ootVuHfVohBseerYy9FTEd1W2"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/introspection/ERC165.sol": {
+			"keccak256": "0xd10975de010d89fd1c78dc5e8a9a7e7f496198085c151648f20cba166b32582b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://fb0048dee081f6fffa5f74afc3fb328483c2a30504e94a0ddd2a5114d731ec4d",
+				"dweb:/ipfs/QmZptt1nmYoA5SgjwnSgWqgUSDgm4q52Yos3xhnMv3MV43"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/introspection/IERC165.sol": {
+			"keccak256": "0x447a5f3ddc18419d41ff92b3773fb86471b1db25773e07f877f548918a185bf1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://be161e54f24e5c6fae81a12db1a8ae87bc5ae1b0ddc805d82a1440a68455088f",
+				"dweb:/ipfs/QmP7C3CHdY9urF4dEMb9wmsp1wMxHF6nhA2yQE5SKiPAdy"
+			]
+		},
+		"@openzeppelin/contracts@v4.4/utils/structs/EnumerableSet.sol": {
+			"keccak256": "0x9772845c886f87a3aab315f8d6b68aa599027c20f441b131cd4afaf65b588900",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ad2f29a9c17a4f746416c9e254e17671f43c409dbfa6e4d7d76c3e4a83212d31",
+				"dweb:/ipfs/QmTqU65L6iu6yqmXKzcNLPioR8etzKPWycpDJCm17ifVdS"
+			]
+		},
+		"contracts/0.8.9/WithdrawalQueue.sol": {
+			"keccak256": "0x762b75500303bea67267aacad1024e9feb44606e697a046304c0876ca2723635",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://112a91f8396bef0a216a2d90427cecc59d64f14313af359eb2ba83ba7abc32d9",
+				"dweb:/ipfs/QmPEnKaGtMwTFzQMsn9Faxx3jW8yKYYFuXeCxgU7BVxgvG"
+			]
+		},
+		"contracts/0.8.9/WithdrawalQueueBase.sol": {
+			"keccak256": "0xd3d6f1d97881fd8bf994016823de16380514adbafe57baebc10668aa9e156996",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://7588ba0a5727623bdde16802bcb7b60251cfeeef7df0e3f4afc9c5fc98d14971",
+				"dweb:/ipfs/QmP6SrBgRdQY1Yko3BMboJvQpY8GN5szN2A6BDeyCySwo2"
+			]
+		},
+		"contracts/0.8.9/WithdrawalQueueERC721.sol": {
+			"keccak256": "0x0240763081e733f88881a825941cbce0e4828774418119456f4d1314bb8839a9",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://196ca584cbc55b3140a76ac9f9c0bb63e6fc36adaea4a7776542df708797f9c8",
+				"dweb:/ipfs/QmTFNr8HipFKSGStkSkkaGxGa34Hgjy9p9ZPZLigP1PPJF"
+			]
+		},
+		"contracts/0.8.9/interfaces/IERC4906.sol": {
+			"keccak256": "0x3cb3c49c94a7dd74d55fbb7d326b6e3449859fe69e292cdfc5ff3fa95a513633",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8783c56d166329e81316a98310a713062c47173741f95cc872ed7bb53a54eb79",
+				"dweb:/ipfs/QmZemKMmbSPME3kGWAubEJWETKNHoLg1x4GXigixa8KvFZ"
+			]
+		},
+		"contracts/0.8.9/lib/UnstructuredRefStorage.sol": {
+			"keccak256": "0x2a78e7a01026b783118a0c33cd7ccfa2288d58931db26c6de054144fadb72309",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://102730ec6ea08219ab899c16941e210e39c9f67efb696382f217fd0d437696ec",
+				"dweb:/ipfs/QmcTtraiRs5BZWFvoWg7hTr9vXr28EoiK6q585tdKMun2d"
+			]
+		},
+		"contracts/0.8.9/lib/UnstructuredStorage.sol": {
+			"keccak256": "0xe4bb1b1a3ecf62b15c386b8eec8418af1f1a0adc7038cc429e49d714c680bf3a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0d7b1747879ffa8eac5041fad304f367998dce57f2ed6185c1baeb81c9df2195",
+				"dweb:/ipfs/Qmckmnk7WgkKwMa4r6MXo2HnNfbNzUg4uvBJxyzrzjatZo"
+			]
+		},
+		"contracts/0.8.9/utils/PausableUntil.sol": {
+			"keccak256": "0x649e985766974846621b6b5e940f3c104313f5cdc67cf3028f6dfc11c95be154",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://be1f588adb2f8fbbd0ad881113571eb6014662c87aea39275a547d7d6efb7b19",
+				"dweb:/ipfs/QmVdAvGqrsBzseJ61oVNJJKB84BYNu1dLWYnd3LvFYC3t8"
+			]
+		},
+		"contracts/0.8.9/utils/Versioned.sol": {
+			"keccak256": "0xc055bd49f21bc48111d6d8eb75b18249b9da88ce0c14abb8f24ebed6a5973d2f",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://f7098e663faa04bfb40f2f146184359d58e63183c01f72d2ac649117a3aa6edd",
+				"dweb:/ipfs/Qmb4N4zduLN8eN6P9AB5EPoGYvTnyBAkqTBEL5o7kULs39"
+			]
+		},
+		"contracts/0.8.9/utils/access/AccessControl.sol": {
+			"keccak256": "0xe4dc828ae4d122a2ec1e01ca8c9d0e21bc7d9a4bf5cde5cce9c199031ad604c9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://659bbf832e5cc2cd50c47d32494d3f5afa0de0771ca2a6b68910cb6f23262b9c",
+				"dweb:/ipfs/QmeDs2KAuNFP4EryLfkgLSSQzU4XZQhBApnyda4Drqg3Eh"
+			]
+		},
+		"contracts/0.8.9/utils/access/AccessControlEnumerable.sol": {
+			"keccak256": "0x06d1c63666d72b2e8d08e5dec85282d52fa352408ea0a5e7538a68722f0ae464",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bbb807c68c54915c8d147b354b7d498f759ebcb53eed8355cb8cf22ac2c9a372",
+				"dweb:/ipfs/QmSSW3JVeigttXYCBrZ2XYHNjrCvttrFybMp3rvq6Rkosd"
+			]
+		}
+	},
+	"version": 1
+}

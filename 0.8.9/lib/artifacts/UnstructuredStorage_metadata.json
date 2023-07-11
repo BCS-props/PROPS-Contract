@@ -1,0 +1,46 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Aragon Unstructured Storage library",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/0.8.9/lib/UnstructuredStorage.sol": "UnstructuredStorage"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/0.8.9/lib/UnstructuredStorage.sol": {
+			"keccak256": "0xe4bb1b1a3ecf62b15c386b8eec8418af1f1a0adc7038cc429e49d714c680bf3a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0d7b1747879ffa8eac5041fad304f367998dce57f2ed6185c1baeb81c9df2195",
+				"dweb:/ipfs/Qmckmnk7WgkKwMa4r6MXo2HnNfbNzUg4uvBJxyzrzjatZo"
+			]
+		}
+	},
+	"version": 1
+}

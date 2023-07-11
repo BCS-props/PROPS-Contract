@@ -1,0 +1,120 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "InvalidContractVersionIncrement",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NonZeroContractVersionOnInit",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "expected",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "received",
+						"type": "uint256"
+					}
+				],
+				"name": "UnexpectedContractVersion",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "version",
+						"type": "uint256"
+					}
+				],
+				"name": "ContractVersionSet",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "getContractVersion",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"stateVariables": {
+				"CONTRACT_VERSION_POSITION": {
+					"details": "Storage slot: uint256 version Version of the initialized contract storage. The version stored in CONTRACT_VERSION_POSITION equals to: - 0 right after the deployment, before an initializer is invoked (and only at that moment); - N after calling initialize(), where N is the initially deployed contract version; - N after upgrading contract by calling finalizeUpgrade_vN()."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"getContractVersion()": {
+					"notice": "Returns the current contract version."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/0.8.9/utils/Versioned.sol": "Versioned"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/0.8.9/lib/UnstructuredStorage.sol": {
+			"keccak256": "0xe4bb1b1a3ecf62b15c386b8eec8418af1f1a0adc7038cc429e49d714c680bf3a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0d7b1747879ffa8eac5041fad304f367998dce57f2ed6185c1baeb81c9df2195",
+				"dweb:/ipfs/Qmckmnk7WgkKwMa4r6MXo2HnNfbNzUg4uvBJxyzrzjatZo"
+			]
+		},
+		"contracts/0.8.9/utils/Versioned.sol": {
+			"keccak256": "0xc055bd49f21bc48111d6d8eb75b18249b9da88ce0c14abb8f24ebed6a5973d2f",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://f7098e663faa04bfb40f2f146184359d58e63183c01f72d2ac649117a3aa6edd",
+				"dweb:/ipfs/Qmb4N4zduLN8eN6P9AB5EPoGYvTnyBAkqTBEL5o7kULs39"
+			]
+		}
+	},
+	"version": 1
+}
