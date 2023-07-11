@@ -108,8 +108,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         // 보유한 wETH 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지, 또는 USDT 보유량이 _amount 이상인지 확인.
         require(/*_amount <= token_wETH.balanceOf(msg.sender) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
-        _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
-        require(coverPrice >= 1,"Invaild Cover Price");
+        _amount <= token.balanceOf(msg.sender));
+        require(coverPrice >= 1);
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
@@ -133,8 +133,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         // 보유한 UNI 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
         require(/*_amount <= token_UNI.balanceOf(msg.sender) * (10 ** 18) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
-        _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
-        require(coverPrice >= 1,"Invaild Cover Price");
+        _amount <= token.balanceOf(msg.sender));
+        require(coverPrice >= 1);
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
@@ -158,8 +158,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         // 보유한 LINK 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
         require(/*_amount <= token_LINK.balanceOf(msg.sender) * (10 ** 18) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
-        _amount <= token.balanceOf(msg.sender),"Insufficient balances.");
-        require(coverPrice >= 1,"Invaild Cover Price");
+        _amount <= token.balanceOf(msg.sender));
+        require(coverPrice >= 1);
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
