@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.8-0.8.18;
 
-import "contracts/0.8.9/WithdrawalQueue.sol";
-import "contracts/0.8.9/WithdrawalQueueBase.sol";
+import "0.8.9/WithdrawalQueue.sol";
+import "0.8.9/WithdrawalQueueBase.sol";
 
 contract lido is WithdrawalQueueBase {
     WithdrawalQueue withdrawalQueues;
