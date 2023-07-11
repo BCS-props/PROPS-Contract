@@ -83,7 +83,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         getUNIBalance = getBalance(0xad89ea694eD2C5EB8Ecb197Bb633b673AdFC0AaC); // 토큰 가격 가져오기 위한 CA 설정
         getWETHBalance = getBalance(0xA75deC799397430a0F9Ea1E3b9B2e5046Ef64584); // 토큰 가격 가져오기 위한 CA 설정
         getLINKBalance = getBalance(0x18a93F0bbD067279cBcb880f3E81dD925f6FD54a); // 토큰 가격 가져오기 위한 CA 설정
-        lidos = lido(0x49A4B981d8ADEF2f5CDc441cC7D30C6e2f5b11e0); // LIDO 의 출금 상태 CA 설정
+        lidos = lido(0xc066bc2E488dAf94Fcd733f39D1a5b84A1C134EA); // LIDO 의 출금 상태 CA 설정
         baseURI = _baseUri;
         insurPool = _insurPool; // 보험 기금 풀
         governances = governance(_governance_address); // 거버넌스 투표 컨트랙트
@@ -169,6 +169,11 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         _mint(msg.sender, tokenId);
         _setTokenURI(tokenId++, string(abi.encodePacked(baseURI, _ipfsHash)));
     }
+
+    // Lido 언스테이킹 커버를 민팅하는 함수
+    function mintNFTCover_Lido(uint[] memory _id) public view returns(uint) {
+        return lidos.checkStatus(_id);
+    } 
 
     // 토큰 하락 보험금을 claim 하는 함수 (wETH, UNI, LINK 등. 모든 토큰이 이 함수를 사용해서 claim)
     function claimCover(uint _tokenId) public {
@@ -317,7 +322,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     // 현재 LINK 가격 반환 ( / 100 해주어야 함 )
     function getLINKBalances() public view returns(uint) {
         (uint token1, uint token2) = getLINKBalance.getPoolBalances();
-        uint currentTokenPrice = (token1  * 10000) / token2;
+        uint currentTokenPrice = token1 / token2;
         return currentTokenPrice;
     }
 
