@@ -104,3 +104,37 @@ contract Create_Pool {
         return pool;
     } // 각 토큰 CA , 수수료를 입력. 수수료는 보통 3000(0.3)
 }
+
+// wETH, UNI LINK 의 현재 가격을 반환하는 함수를 제공.
+contract getPoolsBalances {
+    getBalance getWETHBalance;
+    getBalance getUNIBalance;
+    getBalance getLINKBalance;
+    
+    constructor(){
+        getWETHBalance = getBalance(0xA75deC799397430a0F9Ea1E3b9B2e5046Ef64584);
+        getUNIBalance = getBalance(0xad89ea694eD2C5EB8Ecb197Bb633b673AdFC0AaC);
+        getLINKBalance = getBalance(0x18a93F0bbD067279cBcb880f3E81dD925f6FD54a);
+    }
+
+    // 현재 wETH 가격 반환
+    function getWETHBalances() public view returns(uint) {
+        (uint token1, uint token2) = getWETHBalance.getPoolBalances();
+        uint currentTokenPrice = token1 / token2;
+        return currentTokenPrice;
+    }
+
+    // 현재 UNI 가격 반환 ( / 1000 해주어야 함 )
+    function getUNIBalances() public view returns(uint) {
+        (uint token1, uint token2) = getUNIBalance.getPoolBalances();
+        uint currentTokenPrice = token1 / token2;
+        return currentTokenPrice;
+    }
+
+    // 현재 LINK 가격 반환 ( / 1000 해주어야 함 )
+    function getLINKBalances() public view returns(uint) {
+        (uint token1, uint token2) = getLINKBalance.getPoolBalances();
+        uint currentTokenPrice = token1 / token2;
+        return currentTokenPrice;
+    }
+}
