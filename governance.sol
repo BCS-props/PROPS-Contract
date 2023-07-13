@@ -92,7 +92,7 @@ contract governance {
     }
 
     // 보험 구매 비용에 따라 투표권 지급을 계산하는 함수. mintNFT 컨트랙트에서 사용
-    function calculateVotePower(uint _amount) public pure returns(uint){
+    function calculateVotePower(uint _amount) external pure returns(uint){
         require(_amount > 0,"Cover Price is invaild.");
         if(_amount < 100){
             return 1;
@@ -134,7 +134,7 @@ contract governance {
     }
 
     // 테스트를 위해 만든 버튼!!!!!
-    function Test_increasedVotePower() public {
+    function Test_increasedVotePower() external {
         votePower[msg.sender] += 5;
         totalVotePower += 5;
     }

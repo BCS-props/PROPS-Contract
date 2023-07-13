@@ -120,21 +120,21 @@ contract getPoolsBalances {
     }
 
     // 현재 wETH 가격 반환
-    function getWETHBalances() public view returns(uint) {
+    function getWETHBalances() external view returns(uint) {
         (uint token1, uint token2) = getWETHBalance.getPoolBalances();
         uint currentTokenPrice = token1 / token2;
         return currentTokenPrice;
     }
 
     // 현재 UNI 가격 반환 ( 프론트에서 / 1000 해야 실제 가격. )
-    function getUNIBalances() public view returns(uint) {
+    function getUNIBalances() external view returns(uint) {
         (uint token1, uint token2) = getUNIBalance.getPoolBalances();
         uint currentTokenPrice = token1 / token2;
         return currentTokenPrice;
     }
 
     // 현재 LINK 가격 반환 ( 프론트에서 / 1000 해야 실제 가격. )
-    function getLINKBalances() public view returns(uint) {
+    function getLINKBalances() external view returns(uint) {
         (uint token1, uint token2) = getLINKBalance.getPoolBalances();
         uint currentTokenPrice = token1 / token2;
         return currentTokenPrice;
