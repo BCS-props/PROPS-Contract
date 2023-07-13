@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0
-
-pragma solidity 0.8.9-0.8.18;
+pragma solidity 0.8.9;
 
 /*
     거버넌스 투표
     1. 유저는 하나의 투표권을 사용하여 안건을 제안할 수 있다.
     2. 유저는 제안된 안건 하나당 최대 3번을 투표할 수 있다.
-    3. 모든 안건은 2주가 지나면 종료된다. 프로젝트 초기에는 찬성이 반대보다 많다면 가결.
-        유저가 많아지면, 모든 유저수의 20% 만큼의 투표수를 받고 찬성이 반대보다 많아야 가결.
+    3. 모든 안건은 2주가 지나면 종료된다. 전체 투표수의 33% 가 투표에 참여하고, 찬성이 반대보다 많을 때 안건은 가결된다.
 */
 
 contract governance {
@@ -86,14 +84,14 @@ contract governance {
         checkMyStatus[msg.sender][P_numbers].count++;
     }
 
-    // NFT 구매 시, 투표권 증가시키는 함수. 다른 컨트랙트에서 사용됨.
+    // NFT 구매 시, 투표권 증가시키는 함수. mintNFT 컨트랙트에서 사용
     function increaseVotePower(uint _number, address _address) external {
-        require(msg.sender == mintNFTContract); // 민팅 컨트랙트에서만 호출 가능
+        require(msg.sender == mintNFTContract);
         totalVotePower += _number;
         votePower[_address] += _number;
     }
 
-    // 민팅 비용에 따른 투표권 지급을 계산하는 함수
+    // 보험 구매 비용에 따라 투표권 지급을 계산하는 함수. mintNFT 컨트랙트에서 사용
     function calculateVotePower(uint _amount) public pure returns(uint){
         require(_amount > 0,"Cover Price is invaild.");
         if(_amount < 100){
@@ -130,7 +128,7 @@ contract governance {
         return proposals[P_numbers-1]; 
     } 
 
-    // 유저들이 소유한 모든 투표수를 반환.
+    // 유저들이 소유한 모든 투표권 갯수를 반환.
     function getTotalVotePower() public view returns(uint){
         return totalVotePower;
     }

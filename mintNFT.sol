@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.9-0.8.18;
+pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {IERC20} from "@openzeppelin/contracts@v4.4/token/ERC20/IERC20.sol";
@@ -64,15 +64,9 @@ import "lido.sol";
     3. 이더의 가격이 20% 만큼 하락했는가? (ratio 확인)
     확인 후 coverAmount * ratio 만큼을 msg.sender 에게 지급함.
     --------------------------------------------------------------------------------
-    보험료 계산 (nexus mutual) => 사실상 운영팀 마음대로 결정함.
-    ***보험료 = bumpedPrice - priceDrop 
-    ***bumpedPrice = spotPrice + capacity% of the pool to be used / 1% x 0.2
-    ***bumpedPrice = 0.5% + 1% = 1.5%
-    ***priceDrop = timeSinceLastCoverBuy * speed
-    ***priceDrop = 0.5 days * 0.5% = 0.25%
 
     * 토큰마다 보험료를 다르게 적용함. (wETH + 0%, UNI +7%, LINK + 5%)
-    ** 사용자가 지정한 하락률마다 보험료를 적용함 ( 30일 10~15% 구간 할증, 365일 10~20% 구간 할증 )
+    ** 사용자가 지정한 Ratio 마다 다른 보험료를 적용함 ( 30일 10~15% 구간 할증, 365일 10~20% 구간 할증 )
     *** 언스테이킹 보험은 5일의 기간을 커버함. 보험료는 가격하락 보험과 다르게 적용됨.
     --------------------------------------------------------------------------------
 */
@@ -83,7 +77,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     lido lidos;
 
     struct NFT_Data {
-        uint coverTerm; // 0 : 30일, 1: 365일, 2 이상: Lido 의 id 값을 저장, 중복 가입 방지.
+        uint coverTerm; // 0 : 30일, 1: 365일, 2 이상: Lido 의 언스테이킹 id 값을 저장, 중복 가입 방지.
         uint8 tokenType; // 0 : wETH/Lido, 1 : UNI, 2 : LINK
         uint coverRatio; // 10~90% , 하락한 만큼 보험금 지급
         uint mintTime; // 보험 계약 시간
@@ -101,18 +95,18 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     mapping(address => uint) private totalSpend;
     
-    uint16 priceFormula_30 = 125; // 수수료율 1.25% | daily 0.0416%
-    uint16 priceFormula_365 = 760; // 수수료율 7.60% | daily 0.0208%
+    uint16 priceFormula_30 = 125; // 수수료율 1.25% | daily 0.0416% => asset cover 에서만 사용됨. 구매비용 계산은 calculateCoverFee 함수 사용.
+    uint16 priceFormula_365 = 760; // 수수료율 7.60% | daily 0.0208% => asset cover 에서만 사용됨. 구매비용 계산은 calculateCoverFee 함수 사용.
     uint8 priceDiscount = 10; // 가격 할인율. 5000불 이상 커버를 구매할때, 100불마다 0.001% 할인. ex) 15000불 구매시 0.1% 할인
 
     constructor(string memory _baseUri, address _insurPool, address _governance_address, address _admin) ERC721("InsurSand","IS"){
         getTokenBalance = getPoolsBalances(0x238f0c7C5eA55281C8035FB2EC2255070c1de840);
-        lidos = lido(0x8ED38Ce48c6e2A60Acb1c48Cf1ded93623eE5b82); // LIDO 의 출금 상태 CA 설정
+        lidos = lido(0xdE55338344265cC1E0512f4140a613EA2e711B46); // LIDO 의 출금 상태 CA 설정
         baseURI = _baseUri;
         insurPool = _insurPool; // 보험 기금 풀
         governances = governance(_governance_address); // 거버넌스 투표 컨트랙트
         admin = _admin; // 수수료율을 관리할 어드민 지정
-        _setDefaultRoyalty(_insurPool, 500); // 5% 로열티 설정. << OPENSEA 와 같은 거래소에서 인식함. 개인간 거래에선 적용 안됨.
+        _setDefaultRoyalty(_insurPool, 500); // 5% 로열티 설정. << OPENSEA 와 같은 거래소에서 인식함. 설정한 로열티는 보험 기금 풀로 들어감.
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721URIStorage, ERC2981) returns (bool) {
@@ -127,16 +121,16 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         uint coverPrice = calculateCoverFee(_coverTerm, _coverRatio, _amount); // 커버 가격 계산
         coverPrice = coverPrice * wETHFee / 100;
 
-        uint currentTokenPrice = getTokenBalance.getWETHBalances(); // wETH 가격 계산 from uniswap | 1wETH = 1879 USDT
+        uint currentTokenPrice = getTokenBalance.getWETHBalances(); // wETH 가격 계산 from uniswap | 1WETH = 1879 USDT
 
-        // 보유한 wETH 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지, 또는 USDT 보유량이 _amount 이상인지 확인.
+        // 보유한 wETH 의 평가액이 _amount 이상이면서 보유한 USDT 로 보험금 결제가 가능한지(테스트넷이므로 주석처리), 또는 USDT 보유량이 _amount 이상인지 확인.
         require(/*_amount <= token_wETH.balanceOf(msg.sender) * currentTokenPrice && coverPrice <= token.balanceOf(msg.sender) || */ 
         _amount <= token.balanceOf(msg.sender));
         require(coverPrice >= 1);
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
-        NFT_Datas.push(NFT_Data(_coverTerm, 0, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        NFT_Datas.push(NFT_Data(_coverTerm, 0, _coverRatio, block.timestamp, currentTokenPrice, _amount, true));
         governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
@@ -160,7 +154,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
-        NFT_Datas.push(NFT_Data(_coverTerm, 1, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        NFT_Datas.push(NFT_Data(_coverTerm, 1, _coverRatio, block.timestamp, currentTokenPrice, _amount, true));
         governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
@@ -184,7 +178,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
-        NFT_Datas.push(NFT_Data(_coverTerm, 2, _coverRatio, block.timestamp, currentTokenPrice, _amount, true)); // 중간에 코인 가격 받아와서 넣어야 함
+        NFT_Datas.push(NFT_Data(_coverTerm, 2, _coverRatio, block.timestamp, currentTokenPrice, _amount, true));
         governances.increaseVotePower(governances.calculateVotePower(coverPrice), msg.sender);
 
         _mint(msg.sender, tokenId);
@@ -193,10 +187,10 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
     // Lido 언스테이킹 커버를 민팅하는 함수 ( 10 ** 17 = 0.1 ether 이상 커버 가입 가능.) 
     function mintNFTCover_Lido(uint[] memory _id, uint _coverRatio, string memory _ipfsHash) public {
-        require(_coverRatio >= 5 && _coverRatio <= 90);
+        require(_coverRatio >= 10 && _coverRatio <= 90);
         uint id = _id[0];
 
-        // 같은 출금 요청 id 의 보험 중복 가입을 방지
+        // 동일한 출금 요청 id 의 보험 중복 가입을 방지
         for(uint i ; tokenId > i ; i++){
             if(NFT_Datas[i].coverTerm == id){
                 revert();
@@ -204,13 +198,14 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         }
         
         (uint withdrawETH, uint _timestamp) = lidos.checkStatus(_id);
-        require(1 >= withdrawETH / (10 ** 17) && _timestamp + 432000 > block.timestamp); // 0.1 ether 이상, 출금 신청 후 5일이 지나지 않아야 함
+        require(withdrawETH / (10 ** 17) <= 1  && _timestamp + 432000 > block.timestamp); // 0.1 ether 이상, 출금 신청 후 5일이 지나지 않아야 함
         uint currentTokenPrice = getTokenBalance.getWETHBalances();
         uint _amount = withdrawETH * currentTokenPrice / (10 ** 18);
 
-        // 출금 신청 시간과 커버 신청 시간의 차이를 계산
-        uint timeDiffer = (7200 - ((_timestamp + 432000 - block.timestamp) / 60)) * 1000 / 7200 + 1; // 4자리. 3560 => 35.6 %
-        uint coverPrice = _amount * currentTokenPrice / 10 * _coverRatio * timeDiffer / 10000;
+        // 출금 신청 시간과 커버 신청 시간의 차이를 계산 ( 기본 보험료는 7.5% )
+        // timeDiffer => 3자리 값 반환. 120 = 12.0%.  출금 신청 후 2.5 일 뒤 커버 신청했다면 50.0 % 할인. ( 5일 / 2.5 일 = 50% )
+        uint timeDiffer = (7200 - ((_timestamp + 432000 - block.timestamp) / 60)) * 1000 / 7200;
+        uint coverPrice = (_amount * _coverRatio / 2000) - ((_amount * _coverRatio / 100) * timeDiffer / 20000);
 
         token.transferFrom(tx.origin, insurPool, coverPrice);
         totalSpend[msg.sender] += coverPrice;
@@ -256,7 +251,8 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
 
         NFT_Datas[_tokenId].isActive = false;
         token.transfer(msg.sender, NFT_Datas[_tokenId].coverAmount * NFT_Datas[_tokenId].coverRatio / 100);
-        // 여기에 NFT 이미지를 expired 로 변경하는 _setTokenURI(_tokenId, string(abi.encodePacked(baseURI, _ipfsHash))); 함수 넣기
+        // _setTokenURI(_tokenId, string(abi.encodePacked(baseURI, _ipfsHash))); // expired 이미지로 URI 를 변경함.
+        // NFT expired 이미지 생성부분 미 구현됨. 주석처리.
     }
 
     // 거버넌스 address 변경
@@ -292,7 +288,7 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
         return coverFees;
     }
 
-    // 보험료 계산 함수
+    // 보험료 계산 함수 ( asset cover )
     function calculateCoverFee(uint _coverTerm, uint8 _coverRatio, uint _amount) public view returns(uint){
         uint coverPrice; // 커버 구매 시 내야 할 금액
         uint percentage; // 커버액 5100 불 이상의 할인율 적용
@@ -371,12 +367,12 @@ contract Mint721Token is ERC721URIStorage, ERC2981 {
     usdt > 0x617489EDf1b0E9546D34aA50f22194F582E17f81
     insurPool (EOA) > 0x88cDBb31196Af16412F9a3D4196D645a830E5a4b
     BaseUri > https://teal-individual-peafowl-274.mypinata.cloud/ipfs/
-    ipfsHash > QmRU8FLyF6wa34Jh9C2cbANiTezhb6XUVC5Y8LSbFz4KGG
 
     @@@ 현재 배포, 프론트에서 사용중인 컨트랙트들 => 12.07.2023
     erc20 - 0x617489EDf1b0E9546D34aA50f22194F582E17f81
     gov - 0x3c35155297EB63797Cd9c3952547b27f882603aE
-    nft - 0x626af05a6394E639faEC2E93b602eaa7065C3e34
+    nft - 0x5E0D4f863Bf006BEC8694206b2c5b8d5276b7099
     getbalance - 0x2F5136C8f0Bdf1DC797Cb52419D28143D6F72f93
     getPoolsBalances - 0x238f0c7C5eA55281C8035FB2EC2255070c1de840
+    Lido - 0xdE55338344265cC1E0512f4140a613EA2e711B46
     */
